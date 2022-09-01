@@ -1,0 +1,302 @@
+.main_conatiner {
+    width: 100%;
+    padding: 2vh 2vw;
+    max-height: 12vh;
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+    z-index: 1000;
+    box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.12);
+}
+
+.logo {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.search {
+    flex: 2;
+}
+
+.search .search_input {
+    width: 339px;
+    height: 48px;
+    background: #ffffff;
+    border: 0.5px solid #e5e5e5;
+    box-sizing: border-box;
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.08);
+    border-radius: 2px;
+    font-family: Plus Jakarta Sans;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 0.8rem;
+    line-height: 24px;
+    color: #8e8e8e;
+    padding-left: 20px;
+}
+
+.nav_content {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    align-items: center;
+}
+
+.locBtn {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    height: 3.5em;
+    padding: 1em 3em;
+    transition: all 0.3s ease-in;
+    border-radius: 5px;
+    color: #3f4544;
+    margin-left: 2em;
+}
+
+.locBtn:active {
+    transform: scale(0.8);
+}
+
+.locMenu,
+.notifMenu {
+    position: absolute;
+    top: 12vh;
+    right: 2vw;
+    padding: 0em;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    border-radius: 0px 0px 5px 5px;
+    box-shadow: 0px 10px 12px rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+    transition: all 0.5s ease-in;
+}
+
+.menuItem {
+    padding: 1em 5em;
+    width: 100%;
+    color: #3f4544;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease-in;
+}
+
+.menuItem:hover {
+    background: hsla(0, 0%, 56%, 0.227);
+}
+
+.menu {
+    margin: 0 2rem 0 1rem;
+    cursor: pointer;
+    display: none;
+}
+
+.menuOpen {
+    height: 100%;
+    width: 100vw;
+    background: transparent;
+    position: fixed;
+    top: 12vh;
+    left: 0;
+}
+
+.notif {
+    cursor: pointer;
+    transition: all 0.2s ease-in;
+    border-radius: 50%;
+}
+
+.notif:hover {
+    transform: scale(1.2);
+}
+
+.notif:active {
+    transform: scale(0.8);
+}
+
+.notifLabels {
+    font-size: 1.4rem;
+    margin: 0.5rem 1.5em;
+    display: flex;
+    font-family: Plus Jakarta Sans;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.underlineLink {
+    color: #0db1a1;
+    font-size: 1rem;
+    cursor: pointer;
+    position: relative;
+}
+
+.underlineLink:after {
+    content: '';
+    position: absolute;
+    height: 1px;
+    width: 100%;
+    background-color: #0db1a1;
+    bottom: 0;
+    left: 0;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: all 0.2s ease-in;
+}
+
+.underlineLink:hover::after {
+    transform: scaleX(1);
+}
+
+.notifMenu {
+    right: 20vw;
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 325px;
+    width: 550px;
+    padding: 0.5em 0em;
+}
+
+@media only screen and (max-width: 800px) {
+    .logo {
+        justify-content: flex-start;
+        align-items: center;
+    }
+    .menu {
+        display: block;
+    }
+}
+
+@media only screen and (max-width: 500px) {
+    .nav_content {
+        display: none;
+    }
+}
+
+
+/*Layout file */
+
+.SuperbodyPart {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100vh;
+}
+
+.bodyPart {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+}
+
+.bodyPartScroll {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.currLoc {
+    margin: 20px 10px;
+    font-family: Plus Jakarta Sans;
+    font-weight: normal;
+    font-size: 18px;
+    text-align: center;
+}
+
+
+/*------------- ANIMATIONS -----------------------------*/
+
+.menuTopOpen {
+    animation: topOpen 0.2s ease-in-out forwards;
+}
+
+@keyframes topOpen {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(0%);
+    }
+}
+
+.menuTopClose {
+    animation: topClose 0.2s ease-in-out forwards;
+}
+
+@keyframes topClose {
+    0% {
+        transform: translateX(0%);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+.menuOpenAnimation {
+    animation: menu-open 0.2s ease-in forwards;
+}
+
+@keyframes menu-open {
+    0% {
+        opacity: 0;
+        transform: translateY(-10%);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0%);
+    }
+}
+
+.menuCloseAnimation {
+    animation: menu-close 0.2s ease-in forwards;
+}
+
+@keyframes menu-close {
+    0% {
+        opacity: 1;
+        transform: translateY(0%);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-10%);
+    }
+}
+
+.arrowOpen {
+    animation: arrow-open 0.3s ease-in forwards;
+}
+
+@keyframes arrow-open {
+    0% {
+        transform: scaleY(1);
+    }
+    50% {
+        transform: scaleY(0);
+    }
+    100% {
+        transform: scaleY(-1);
+    }
+}
+
+.arrowClose {
+    animation: arrow-close 0.3s ease-in forwards;
+}
+
+@keyframes arrow-close {
+    0% {
+        transform: scaleY(-1);
+    }
+    50% {
+        transform: scaleY(0);
+    }
+    100% {
+        transform: scaleY(1);
+    }
+}

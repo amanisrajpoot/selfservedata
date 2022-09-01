@@ -1,0 +1,23 @@
+.root {
+    background-color: #F6F7F9;
+    display: flex;
+    justify-content: center;
+    height: fit-content;
+    min-height: 100%;
+    padding: 5em 0em;
+}
+
+.container {
+    /* background-color: pink; */
+    display: flex;
+    justify-content: space-between;
+    padding: 0em;
+    color: #3F4544;
+    /* height: 60vh; */
+}
+
+.info {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}

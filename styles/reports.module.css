@@ -1,0 +1,55 @@
+.report_card{
+    display: flex;
+    align-items: center;
+    margin: 0px 20px ;
+    padding: 20px 0px;
+    justify-content: space-between;
+    background: #FFFFFF;
+    box-sizing: border-box;
+    border:none;
+    border-bottom: 1px solid #E1E1E1;
+    cursor: pointer;
+}
+.report_card:last-child{
+    border:none;
+}
+.report_head{
+    display: flex;
+    flex: 3;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    background: #FFFFFF;
+    border:none;
+}
+.details{
+    flex: 1;
+    display: flex;
+    width: 100%;
+    justify-content: flex-end;
+    align-items: center;
+    align-content: center;
+}
+.content{
+    margin-left:1rem ;
+    font-family: Plus Jakarta Sans;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 1rem;
+    line-height: 140%;
+    color: #3F4544;
+}
+.heading{
+    font-family: Plus Jakarta Sans;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 1.3rem;
+    line-height: 140%;
+    text-align: right;
+    color: #3F4544;
+}
+@media only screen and (max-width: 800px) {
+    .heading{
+        line-height: 120%;
+    }
+}

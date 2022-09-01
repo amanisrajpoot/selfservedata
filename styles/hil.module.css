@@ -1,0 +1,157 @@
+.main{
+    background: #F6F7F9;
+    width: 100%;
+    display: flex;
+    padding: 2rem 3vw;
+    flex-direction: column;
+}
+.topBar{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding-bottom: 30px;
+}
+.span0{
+    font-family: Plus Jakarta Sans;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 1.5rem;
+    line-height: 24px;
+    color: #3F4544;
+    display: flex;
+    flex-direction: column;
+}
+.semiBorderBottom{
+    width: 60px;
+    margin-top: 5px;
+    border-bottom: 4px solid #0DB1A1;
+}
+.button{
+    width: 276px;
+    height: 32px;
+    background: rgba(118, 118, 128, 0.12);
+    border-radius: 9px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2px;
+}
+.button1{
+    width: 50%;
+    cursor: pointer;
+    height: 100%;
+    font-family: Plus Jakarta Sans;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 0.9rem;
+    line-height: 20px;
+    background: #FFFFFF;
+    border: 0.5px solid rgba(0, 0, 0, 0.04);
+    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.12), 0px 3px 1px rgba(0, 0, 0, 0.04);
+    border-radius: 7px;
+}
+.button2{
+    cursor: pointer;
+    width: 50%;
+    text-align: center;
+    border: none;
+    background-color: transparent;
+    font-family: Plus Jakarta Sans;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 0.9rem;
+    line-height: 20px;
+    display: flex;
+    letter-spacing: -0.24px;
+    flex-direction: row;
+    justify-content: center;
+    color: #3F4544;
+}
+
+.sort {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+.sort span{
+    font-family: Plus Jakarta Sans;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 1rem;
+    /* identical to box height, or 16px */
+    text-align: right;
+    color: #3F4544;
+    margin-left: 1rem;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.medical_cabinet{
+    margin: 2vh 0;
+    width: 100%;
+    height: 100%;
+    background: #FFFFFF;
+    border-radius: 5px;
+    overflow: hidden;
+}
+.table_content{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+.table_content_select{
+    border: none;
+    outline: none;
+    background: none;
+    width: 100%;
+}
+.MuiDataGrid-columnHeader{
+    background-color: white !important;
+}
+.header, .content{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex: 1;
+    width: 100%;
+    border-bottom: 1px solid #ECEFF4;
+}
+.header th {
+    padding: 1rem;
+    margin: 1px;
+    background: #ECEFF4;
+    flex: 1;
+    text-align: center;
+    font-family: Plus Jakarta Sans;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 0.8rem;
+    line-height: 21px;
+    color: #3F4544;
+}
+.content td{
+    padding: 1rem;
+    margin: 1px;
+    flex: 1;
+    text-align: center;
+    font-family: Plus Jakarta Sans;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 0.8rem;
+    line-height: 21px;
+    color: #3F4544;
+}
+.row_per_page{
+    /* background: #FFFFFF; */
+    border: 1px solid #E1E1E1;
+    box-sizing: border-box;
+    border-radius: 5px;
+    background-color: thistle;
+}

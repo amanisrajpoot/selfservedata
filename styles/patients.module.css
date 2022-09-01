@@ -1,0 +1,103 @@
+.main{
+    background: #F6F7F9;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.span0{
+    margin-top: 10px;
+    font-family: Plus Jakarta Sans;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 1.5rem;
+    line-height: 24px;
+    color: #3F4544;
+    display: flex;
+    flex-direction: column;
+    padding-top: 20px;
+    margin-left: 90px;
+}
+.semiBorderBottom{
+    width: 60px;
+    margin-top: 5px;
+    border-bottom: 4px solid #0DB1A1;
+}
+
+
+
+.sort {
+    position: absolute;
+    width: 80px;
+    height: 16px;
+    left: 1337px;
+    top: 157px;
+    padding-bottom: 20px;
+    margin-left: 240px;
+    justify-content: space-between;
+}
+.sort span{
+    position: absolute;
+    width: 33px;
+    height: 26px;
+    font-family: Plus Jakarta Sans;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 1rem;
+    line-height: 100%;
+    padding-left: 15px;
+    /* identical to box height, or 16px */
+    text-align: right;
+    color: #3F4544;
+}
+
+.sort::before{
+    content: "";
+    width: 33px;
+    height: 16px;
+    background:url("../public/sort.png");
+}
+.medical_cabinet{
+    position: absolute;
+    width: 1340px;
+    height: 340px;
+    left: 338px;
+    top: 212px;
+    background: #FFFFFF;
+    border-radius: 5px;
+}
+.header{
+    background: #ECEFF4;
+
+}
+
+.header th {
+    height: 100%;
+    /* width: 5%; */
+    padding:15px ;
+    text-align: center;
+    border-radius: 5px 5px 0px 0px;
+    padding-right: 213px;
+    font-family: Plus Jakarta Sans;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 0.8rem;
+    line-height: 21px;
+    color: #3F4544;
+}
+
+
+.content td{
+    height: 100%;
+    padding: 15px;
+    padding-left: 40px;
+    border:none;
+    padding-right: 10px;
+    border-bottom: 1px solid #E1E1E1;;
+}
+.row_per_page{
+    /* background: #FFFFFF; */
+    border: 1px solid #E1E1E1;
+    box-sizing: border-box;
+    border-radius: 5px;
+    background-color: thistle;
+}

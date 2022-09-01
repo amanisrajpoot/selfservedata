@@ -1,0 +1,123 @@
+.main_container{
+    position:absolute;
+    top:10%;
+    left: 20%;
+    margin:0;
+
+}
+.main_container .top_div{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    display: flex;
+    list-style: none;
+}
+.main_container .buttons{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+.main_container .top_div .buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.main_container .top_div .span {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-family: Plus Jakarta Sans;
+    font-style: normal;
+    font-weight: 800;
+    font-size: 35px;
+    padding-right: 800px;
+}
+.main_container .top_div .button1 {
+    width: 200px;
+    height: 40px;
+    font-family: Plus Jakarta Sans;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    text-align: center;
+    background: #FFFFFF;
+    border: 0.5px solid rgba(0, 0, 0, 0.04);
+    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.12), 0px 3px 1px rgba(0, 0, 0, 0.04);
+    border-radius: 6.93px;
+    text-align: center;
+    border-radius: 8px;
+}
+.main_container .top_div .button2 {
+    width: 200px;
+    height: 40px;
+    font-family: Plus Jakarta Sans;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 24px;
+    text-align: center;
+    color:black;
+    text-align: center;
+    background: rgba(118, 118, 128, 0.12);
+    border-radius: 8.91px;
+}
+.box1{
+    margin-top: 30px;
+    padding-top:30px;
+    width: 60%;
+    border-radius: 5px;
+    border: 0.5px solid #E5E5E5;
+    box-sizing: border-box;
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.08);
+    border-radius: 5px;
+    height: 150px;
+}
+.box1 .top {
+    width: 100%;
+    justify-content: space-between;
+    display: flex;
+    list-style: none;
+    padding-bottom: 20px;
+
+}
+.box1 .top .span1{
+    font-family: Plus Jakarta Sans;
+    font-style: normal;
+    font-weight: 550;
+    margin-left: 40px;
+    font-size: 25px;
+    line-height: 20px;
+    color: #3F4544;
+}
+.box1 .top .exp_button{
+    margin-right: 30px;
+    width: 180px;
+    height: 35px;
+    background: #FFECEB;
+    border-radius: 24px;
+}
+.box1 .bottom {
+    width: 100%;
+    justify-content: space-around;
+    display: flex;
+    list-style: none;
+    padding-right:360px ;
+}
+ .label{
+    display: flex;
+    justify-content: space-around;
+    padding-top: 30px;
+    padding-left: 200px;
+}
+.box1 .bottom .input1{
+    width: 25px;
+height: 25px;
+}
+.box1 .bottom .input2{
+    width: 25px;
+height: 25px;
+}
+.box1 .bottom  {
+    padding-right: 20px;
+}
