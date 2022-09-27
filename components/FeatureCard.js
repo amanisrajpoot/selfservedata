@@ -130,18 +130,18 @@ export default function FeatureCard(props){
                                             }
                                         }):
                                     router.pathname.includes('/catalog')? router.push({
-                                                pathname:`/catalog/${props.data.ID}`,
+                                                pathname:`/catalog/${props.data.id}`,
                                                 query:{
                                                     currentRouteTitle:props.currentRouteTitle?props.currentRouteTitle:'',
-                                                    catalogID:props.data.ID,
+                                                    catalogID:props.data.id,
                                                     mainTopic:props.data.topic.split(",")[0],
                                                 }
                                             }):
                                     router.pathname.includes('/browsecatalogue')? router.push({
-                                            pathname:`/catalog/${props.data.ID}`,
+                                            pathname:`/catalog/${props.data.id}`,
                                             query:{
                                                 currentRouteTitle:"Catalogs",
-                                                catalogID:props.data.ID,
+                                                catalogID:props.data.id,
                                                 mainTopic:props.data.topic.split(",")[0],
                                             }
                                         }):

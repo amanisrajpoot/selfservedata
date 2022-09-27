@@ -15,12 +15,15 @@ import Divider from '@mui/material/Divider';
 import DataSourcesDetails from '../components/datasourcesdetails';
 import { useRouter } from 'next/router';
 import {getPublicDatasets, getDatasets, getUser, getPublicDatasetsTopics, getPublicDatasetsTopicKeyword} from '../function/users';
+import {getDataSourceInfoByID, getDataSourceList } from '../function/users';
 import LeftNav from "../components/LeftNav";
 import mixpanel from 'mixpanel-browser';
 import InputAdornment from "@mui/material/InputAdornment";
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import SettingsIcon from '@mui/icons-material/Settings';
+import AddIcon from '@mui/icons-material/Add';
+
 import TableViewOutlinedIcon from '@mui/icons-material/TableViewOutlined'
 import FilterListIcon from '@mui/icons-material/FilterList';
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -73,8 +76,8 @@ export default function BrowseCatalogue({
   dataset,
   userdatasets,
   setUserdatasets,
-  dataSources,
-  setDataSources,
+  //dataSources,
+  //setDataSources,
   addDatasetcatalog,
   removeDatasetcatalog,
   user,
@@ -90,6 +93,12 @@ export default function BrowseCatalogue({
     const open2 = Boolean(anchorEl2);
     const openUser = Boolean(anchorElUser);
     const [isActive, setIsActive] = React.useState(false);
+    const [dataSources, setDataSources] = useState([]);
+    const [data, setData] = React.useState({
+        "requestParameter": {
+          "value": 1
+        }
+      })
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -125,6 +134,19 @@ export default function BrowseCatalogue({
                 setuser(userP)
             }
             console.log('userP', userP);
+        }
+    }, [token, router]);
+
+    useEffect(async () => {
+        if(token !== 0 && token && token !== null && token !== undefined){
+                console.log('calling api with this data', token, data);
+            const dataSources = await getDataSourceList(token, data);
+            if(dataSources === null){
+                setDataSources({});
+            }else{
+                setDataSources(dataSources.responseData)
+            }
+            console.log('new api datasources', dataSources);
         }
     }, [token, router]);
 
@@ -229,100 +251,6 @@ export default function BrowseCatalogue({
     setPageNumber(selected);
   };
 
-    useEffect(async ()=>{
-        setIsActive(true);
-        const catalog = await getPublicDatasetsTopics(token, filterTopics.toString());
-        setTopicFilteredDataSources(catalog);
-        setIsActive(false);
-        console.log("filtered catalog data",dataSources);
-    }, [filterTopics]);
-
-    useEffect( async (topic) => {
-        if(searchMode === 2){
-        handleClose()
-        setFilterTopics(localFilterTopics)
-        if(token!==null){
-            mixpanel.track('Topic Filtered Keyword Search for Catalogs', {
-                'source': "Browse Catalog page",
-                'action': "keyword search",
-                'keyword': keyword,
-                'topic': topic,
-                'email': user.email,
-            });
-            setIsActive(true);
-            const catalog = await getPublicDatasetsTopicKeyword({token, keyword,topics:filterTopics});
-            setTopicFilteredDataSources(catalog);
-            setIsActive(false);
-            console.log("filtered catalog data",catalog);
-            setSearchMode(2)
-            console.log("fetched data",catalog);
-            console.log("fetched data",topicFilteredDataSources);
-        }
-    }},[localFilterTopics, filterTopics, keyword, token]);
-
-    useEffect(async ()=>{
-        if(!router.pathname.includes("/browsecatalogue")){
-            setSearchMode(0)
-        }
-
-    }, [router]);
-
-    useEffect(async () => {
-        if(token !== 0 && token && token !== null && token !== undefined && 
-            (userdatasets === [] || userdatasets === null || userdatasets !== undefined)){
-            console.log('get datasets called from catalog page', token);
-            const data = await getDatasets(
-                token
-            );
-            setUserdatasets(data);
-            console.log("fetched datasets",data);
-            }
-    }, [token]);
-
-    useEffect(async () => {
-		if(token!==null){
-            setIsActive(true);
-            const data = await getPublicDatasets(
-			token
-		    );
-			setDataSources(data);
-            setIsActive(false);
-      console.log("fetched data",data);
-      }
-  }, [token, router]);
-
-    useEffect(async ()=>{
-        if(dataSources && dataSources !== null && dataSources !== undefined && dataSources.length > 0){
-        setUniqueTopics([...new Set(dataSources.map(item => item.topic))])
-        console.log("unique topics",uniqueTopics);
-        }
-    }, [dataSources])
-
-  const handleKeywordSearch = async (event) => {
-      
-      if(token!==null && keyword!=='' && filterTopics.length === 0){
-          setSearchMode(1)
-          console.log("SEARCH", keyword)
-          mixpanel.track('Keyword Search for Catalogs', {
-            'source': "Browse Catalog page",
-            'action': "keyword search",
-            'keyword': keyword,
-              'email': user.email,
-          });
-          setIsActive(true);
-          const data = await getPublicDatasets(
-          token,keyword
-        );
-          setKeywordFilteredDataSources(data);
-          setFilterTopics([]);
-          setIsActive(false);
-          setSearchMode(1)
-          console.log("fetched data",data);
-          console.log("fetched data",keywordFilteredDataSources);
-      }
-  };
-
-
   return (
     
     <div style={{minHeight:"100%", display:'flex',minWidth:'100%', maxWidth:'100%',backgroundColor: '#FAFAFB',
@@ -330,9 +258,9 @@ export default function BrowseCatalogue({
             paddingLeft:'1em', paddingRight:'1em',paddingTop:'7.15em',flexDirection:'column'}}>
       {/*<Navbar token={token} setToken={setToken}/>*/}
 
-            <div style={{ display: 'flex', flexDirection:'row', font:'roboto',paddingBottom:"1.5em",
+            <div style={{ display: 'flex', flexDirection:'row', font:'roboto',paddingBottom:"1.5em",minWidth:'100%',
                             color:'gray-700',justifyContent:'space-between', alignItems:'end'}}>
-                            <div style={{fontSize:28}}>Browse Catalogs &nbsp;&nbsp;</div>
+                            <div style={{fontSize:28}}>Data Catalogs &nbsp;&nbsp;</div>
 
                         </div>        
 
@@ -342,19 +270,36 @@ export default function BrowseCatalogue({
               <div style={{ display: 'flex', flexDirection:'row', font:'roboto', fontSize:18,
                     color:'gray-700',justifyContent:'space-around', alignItems:'center', }}>
                     <div><TableViewOutlinedIcon fontSize="large"/>&nbsp;&nbsp;</div>
-                      <div>Search Data Catalogs &nbsp;</div>
+                      <div>Added Data Catalogs &nbsp;</div>
                   {/* {searchMode === 0 && dataSources !== null && dataSources !== undefined ?
                   <div>{"("+ dataSources.length+")"}</div>: */}
-                      {searchMode === 1 && keywordFilteredDataSources !== null && keywordFilteredDataSources !== undefined ?
+                      {searchMode === 0 && dataSources !== null && dataSources !== undefined ?
+                      <div>{"("+ dataSources.length+")"}</div>:
+                      searchMode === 1 && keywordFilteredDataSources !== null && keywordFilteredDataSources !== undefined ?
                       <div>{"("+ keywordFilteredDataSources.length+")"}</div>:
                       searchMode === 2 && topicFilteredDataSources !== null && topicFilteredDataSources !== undefined ?
                       <div>{"("+ topicFilteredDataSources.length+")"}</div>:null}
                     <div style={{color:'gray'}}><Divider variant="middle" flexItem/></div>
 
+                    
+
                 </div>
-              <div style={{color:'gray'}}><Divider variant="middle" flexItem/></div>
-                {/* <SettingsIcon fontSize="large" sx={{cursor:'pointer', color:"gray"}}
-                    onClick={()=>router.push("/settings")}/> */}
+
+                
+                <Button variant="contained" size="large"
+                                sx={{backgroundColor:'#5A00E2', px:2, borderRadius:3, textTransform: "capitalize"}}
+                                startIcon={<AddIcon />}
+                                onClick={() => {
+                                    router.push('/submitfile');
+                                    // mixpanel.time_event('Create Dataset');
+                                    mixpanel.track('Clicked on Create Dataset', {
+                                        'source': "Data Platform Dashboard",
+                                        'scrolled first': true,
+                                        'email':user.email
+                                    });
+                                }}>
+                            {/* onClick={handleOpen}> */}
+                            Add a Datasource</Button>
 
           </div>
 
@@ -369,7 +314,7 @@ export default function BrowseCatalogue({
             <div style={{ display:'flex', flexDirection:'column', borderRadius:'0.75em', minWidth:'100%',maxWidth:'100%',
                             justifyContent:"center",alignItems:'center', border:'0.5px solid #bfbfbf',}}>
                     
-                        <div style={{ display:'flex', minWidth:'98.5%',maxWidth:'98.5%',borderRadius:'1rem',backgroundColor:'#fff',flexDirection:'column',
+                        {/* <div style={{ display:'flex', minWidth:'98.5%',maxWidth:'98.5%',borderRadius:'1rem',backgroundColor:'#fff',flexDirection:'column',
                             paddingLeft:'1rem',marginRight:'1rem',marginLeft:'1rem',paddingTop:'3rem',paddingBottom:'2rem',
                             marginTop:'0.5em',
                             
@@ -384,7 +329,7 @@ export default function BrowseCatalogue({
                                             borderRadius:4, width:'100%'}}
                                             onKeyDown={()=>handleKeywordSearch()}>
                                         {/*<FilterListIcon sx={{ fontSize: 25,  }}/>*/}
-                                    {/*</input> */}
+                                    {/*</input> 
 
                                     <TextField fullWidth id="outlined-basic" variant="outlined"
                                                 className="inputRounded" value={keyword} 
@@ -416,7 +361,7 @@ export default function BrowseCatalogue({
                                             ),
                                             placeholder:"Search..."
                                         }}
-                                    /> */}
+                                    /> 
 
                                     <Button sx={{minWidth:'18%',maxWidth:'18%', minHeight:'6vh',maxHeight:'6vh', display:'flex',ml:3,color:'#939EAA',
                                         alignItems:'center', justifyContent:'center', borderRadius:2, border:0.5, borderColor:'gray',
@@ -495,7 +440,7 @@ export default function BrowseCatalogue({
                                     </div>
                                     </div>}
 
-                    </div>
+                    </div> */}
 
                     <div style={{display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center',
                         minWidth:'100%',maxWidth:'100%', height:'100%', 

@@ -204,10 +204,6 @@ export default function LeftNav({
 							fill={router.pathname.includes('/datasets')?"#5A00E2":'#474F5A'}/>
 						</svg>
 
-
-
-
-
 					<p
 						style={{fontSize:20, font:'roboto', fontWeight:router.pathname.includes('/datasets/')?900:500,
 							color: router.pathname.includes('/datasets')? '#5A00E2' : '',
@@ -217,7 +213,7 @@ export default function LeftNav({
 					</p>
 				</div>
 
-				<div
+				{/* <div
 					onClick={() => {
 						router.push('/browsecatalogue');
 						// if (width !== null && width <= 800) {
@@ -232,7 +228,7 @@ export default function LeftNav({
 						: '#474F5A',
 					}}
 				>
-						{/* <SourceIcon fontSize="medium" sx={{fontSize:28,}}/> */}
+						{/* <SourceIcon fontSize="medium" sx={{fontSize:28,}}/> 
 						<svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
 							<path d="M19.3702 5.55906L13.5102 2.94906C12.6502 2.56906 11.3502 2.56906 10.4902 2.94906L4.63018 5.55906C3.15018 6.21906 2.93018 7.11906 2.93018 7.59906C2.93018 8.07906 3.15018 8.97906 4.63018 9.63906L10.4902 12.2491C10.9202 12.4391 11.4602 12.5391 12.0002 12.5391C12.5402 12.5391 13.0802 12.4391 13.5102 12.2491L19.3702 9.63906C20.8502 8.97906 21.0702 8.07906 21.0702 7.59906C21.0702 7.11906 20.8602 6.21906 19.3702 5.55906Z" fill={router.pathname.includes('/browsecatalogue')? '#5A00E2':'#474F5A'}/>
 							<path opacity="0.4" d="M11.9998 17.708C11.6198 17.708 11.2398 17.628 10.8898 17.478L4.14982 14.478C3.11982 14.018 2.31982 12.788 2.31982 11.658C2.31982 11.248 2.64982 10.918 3.05982 10.918C3.46982 10.918 3.79982 11.248 3.79982 11.658C3.79982 12.198 4.24982 12.898 4.74982 13.118L11.4898 16.118C11.8098 16.258 12.1798 16.258 12.4998 16.118L19.2398 13.118C19.7398 12.898 20.1898 12.208 20.1898 11.658C20.1898 11.248 20.5198 10.918 20.9298 10.918C21.3398 10.918 21.6698 11.248 21.6698 11.658C21.6698 12.778 20.8698 14.018 19.8398 14.478L13.0998 17.478C12.7598 17.628 12.3798 17.708 11.9998 17.708Z" fill={router.pathname.includes('/browsecatalogue')? '#5A00E2':'#474F5A'}/>
@@ -248,7 +244,7 @@ export default function LeftNav({
 					>
 						Catalogs
 					</p>
-				</div>
+				</div> */}
 
 				{/* <div style={{paddingTop:18, paddingBottom:24}}>
 					<Divider />

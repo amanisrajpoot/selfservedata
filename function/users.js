@@ -1,4 +1,5 @@
 import {BASE_BACKEND} from "./constants";
+import {BASE_API_BACKEND} from "./constants";
 
 export async function getUser(token){
     const req = {
@@ -223,4 +224,30 @@ export async function getReports({token, location}){
         console.log("Error:", e)
         return null
     }
+}
+
+export async function getDataSourceList(token, data){
+    const req = {
+        method:"POST",
+        headers: {
+             'Content-Type': 'application/json',
+             //'authorization': token
+         },
+        body: JSON.stringify(data)
+    };
+    const res = await fetch(BASE_API_BACKEND+"/GetDataSourceList", req)
+    return res.json()
+}
+
+export async function getDataSourceInfoByID(token, dataSource){
+    const req = {
+        method:"POST",
+        headers: {
+             'Content-Type': 'application/json',
+             //'authorization': token
+         },
+        body: JSON.stringify(dataSource)
+    };
+    const res = await fetch(BASE_API_BACKEND+"/GetDataSourceInfoByID", req)
+    return res.json()
 }

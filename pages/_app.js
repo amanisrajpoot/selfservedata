@@ -73,7 +73,7 @@ function MyApp({ Component, pageProps }) {
           router.push("/login").then(r => {console.log("Redirected to Login")})
         
       } else if (token && nonAuthRoutes.includes(router.pathname)){
-          router.push("/dashboard").then(r => {console.log("Redirected to Dashboard")})
+          router.push("/browsecatalogue").then(r => {console.log("Redirected to Browse Catalogogs")})
       }
   }, [token]);
 
@@ -103,6 +103,12 @@ function MyApp({ Component, pageProps }) {
         catalog:[]
   });
 
+  const [dataSourceData, setDataSourceData] = useState({
+    "requestParameter": {
+      "value": 1
+    }
+  })
+
     const [userdatasets, setUserdatasets] = useState([]);
     useEffect(async () => {
         if(token !== 0 && !token && token !== null && token !== undefined){
@@ -123,9 +129,7 @@ function MyApp({ Component, pageProps }) {
     const [dataSources, setDataSources] = useState([]);
     useEffect(async () => {
 		if(token !== 0 && !token && token !== null && token !== undefined){
-            const data = await getPublicDatasets(
-			token
-		);
+            const data = await getDataSourceList(token, dataSourceData);
 			setDataSources(data);
       console.log("fetched data",data);
       }

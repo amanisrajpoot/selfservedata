@@ -12,6 +12,7 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import Output from '../../components/output';
 import {useRouter} from 'next/router';
 import {getDatasetsId, downloadDatasetsId, getUser, deleteUserDataset, updateUserDataset, getPublicDatasetsTopics} from '../../function/users';
+import {getDataSourceInfoByID} from '../../function/users';
 import DataSourcesDetails from '../../components/datasourcesdetails';
 import AddIcon from '@mui/icons-material/Add';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -80,6 +81,12 @@ export default function ManageDataset({
     const [filteredDataSources, setFilteredDataSources] = useState([])
     const [relatedDataSources, setRelatedDataSources] = useState([])
     const [currentRouteTitle, setCurrentRouteTitle] = useState("")
+    const [dataSource, setDataSource] = useState({
+        "requestParameter": {
+          "value": parseInt(datasource_id)
+        }
+      })
+    const [dataSourceData, setDataSourceData] = useState({})
 
     useEffect(()=>{
         dataSources !== null && dataSources !== undefined &&
@@ -118,39 +125,11 @@ export default function ManageDataset({
 
     useEffect(async ()=>{
         if(token !== 0 && token && token !== null && token !== undefined){
-            const dataset = await getDatasetsId(token, datasource_id);
-            setUserDataset(dataset);
-            console.log("fetched dataset data",userdataset);
+            const dataSourced = await getDataSourceInfoByID(token, dataSource);
+            setDataSourceData(dataSourced.responseData);
+            console.log("fetched datasource data",dataSourced.responseData);
         }
     }, [token, datasource_id]);
-
-    useEffect(async ()=>{
-        if(token !== 0 && token && token !== null && token !== undefined){
-            console.log("assaadsdaadsadsadsdasadsadsads29", mainTopic, filteredDataSources)
-            const catalog = await getPublicDatasetsTopics(token, mainTopic);
-            setFilteredDataSources(catalog);
-            console.log("filtered catalog data",filteredDataSources, );
-            console.log("assaadsdaadsadsadsdasadsadsads69", mainTopic,filteredDataSources )
-        }
-    }, [token, mainTopic]);
-
-    const [relatedTopic, setRelatedTopic]= useState('')
-    useEffect(async ()=>{
-        if(token !== 0 && token && token !== null && token !== undefined && 
-            relatedTopic !== null && relatedTopic !== undefined){
-            const catalog = await getPublicDatasetsTopics(token, relatedTopic[0]);
-            setRelatedDataSources(catalog);
-            console.log("related catalog data",relatedDataSources, relatedTopic[0]);
-        }
-    }, [token,relatedTopic, router]);
-
-    const handleDownloadButton = async() => {
-        const downloadLink = await downloadDatasetsId(token, datasource_id);
-        setDownloadLink(downloadLink.url);
-        if(downloadLink.url !== null && downloadLink.url !== undefined){
-            await window.open(downloadLink.url, '_blank');
-        }
-    }
 
     const addLocalDatasetcatalog = (data) => {
         setUserDataset({...userdataset,catalog:[...userdataset.catalog,data]});
@@ -303,7 +282,7 @@ export default function ManageDataset({
                         <Box sx={{ display: 'flex', flexDirection:'row', font:'roboto', fontSize:24,
                             color:'gray-900',justifyContent:'space-around'}}>
                             <div>Data Catalog Overview: &nbsp;</div>{dataSources !== null && dataSources !== undefined &&
-                                dataSources.map((data,index)=> datasource_id == data.ID && <div>{data.title}</div>)}
+                                <div>{dataSource.title}</div>}
                         </Box>
 
                     </Box>
@@ -312,14 +291,14 @@ export default function ManageDataset({
                     <div style={{ }}>
                         <Box sx={{ display: 'flex', flexDirection:'row', py: 2,px:2, justifyContent:'space-between'}}>
                         {
-                            dataSources !== null && dataSources !== undefined
-                            && dataSources.map((data,index)=> datasource_id == data.ID && <CatalogCardOut token={token} localDataset={localDataset}
+                            dataSource !== null && dataSource !== undefined && 
+                             <CatalogCardOut token={token} localDataset={localDataset}
                                               setLocalDataset={setLocalDataset} localTitle={localTitle} setLocalTitle={setLocalTitle}
                                               localDescription={localDescription}setLocalDescription={setLocalDescription} localTopic={localTopic}
-                                              setLocalTopic={setLocalTopic}data={data} datasetMode={datasetMode} setDatasetMode={setDatasetMode}
+                                              setLocalTopic={setLocalTopic}data={dataSource} datasetMode={datasetMode} setDatasetMode={setDatasetMode}
                                               dataSources={dataSources}setDataSources={setDataSources} userdataset={userdataset} setUserDataset={setUserDataset}
                                               deleteF={deleteF} updateF={updateF} currentTopic={currentTopic} setCurrentTopic={setCurrentTopic}
-                            />)
+                            />
                         }
                         </Box>
 

@@ -167,10 +167,10 @@ export default function TopNav({
 										router.push('/settings')
 										handleCloseUser()
 										}}><SettingsIcon/>&nbsp; Settings</MenuItem>
-									<MenuItem onClick={()=>{
+									{/* <MenuItem onClick={()=>{
 										router.push('/support')
 										handleCloseUser()
-										}}><LiveHelpIcon/>&nbsp; Support</MenuItem>
+										}}><LiveHelpIcon/>&nbsp; Support</MenuItem> */}
 									<MenuItem onClick={()=>{
 										// mixpanel.track('Sign Out', {
 										// 	'source': "Dashboard Page",

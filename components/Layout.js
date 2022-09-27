@@ -27,7 +27,7 @@ export default function Layout({ children, user, Auth, userdatasets }) {
             width: '100%',
             height: '100%',
           }}>
-            {showNav && <LeftNav user ={user} userdatasets={userdatasets}/>}
+            {/*showNav && <LeftNav user ={user} userdatasets={userdatasets}/>*/}
             <div className={styles.bodyPartScroll}>
               {children}
               </div>
