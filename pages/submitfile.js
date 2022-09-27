@@ -35,7 +35,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { Dropzone, FileItem } from "@dropzone-ui/react";
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
-import S3 from 'react-aws-s3';
+// import S3 from 'react-aws-s3';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 
