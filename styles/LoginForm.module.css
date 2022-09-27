@@ -1,0 +1,148 @@
+.main_container {
+    min-height: 100%;
+    padding: 2%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(255, 255, 255);
+    border:1;
+    
+}
+
+.error {
+    margin-top: 0.5rem;
+    color: #FF3C30;
+}
+
+.inner_container {
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    padding: 5vh 5vw;
+    align-items: center;
+    border-radius: 5px;
+    max-width: 600px;
+    width: 100%;
+    min-height: 100%;
+    border-color: black;
+    border-style: solid;
+    border: 1px solid black;
+}
+
+.logo {
+    display: flex;
+    padding: 1rem 5vw;
+    margin: auto;
+}
+
+.input_fields {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+}
+
+.input_fields .input {
+    margin: 1rem;
+    border-top-style: hidden;
+    border-right-style: hidden;
+    border-left-style: hidden;
+    outline: 1px solid black;
+    border-radius: 5px;
+    border-bottom: 1px solid grey;
+    padding: 0.5rem;
+    font-family: Plus Jakarta Sans;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 1rem;
+    line-height: 27px;
+    width: 100%;
+}
+
+.input_fields h1 {
+    color: rgb(79, 87, 94);
+    margin: 1rem;
+    font-size: 2rem;
+    text-align: center;
+}
+
+.input_fields .bottom_container {
+    display: flex;
+    justify-content: space-between;
+    width: auto;
+    align-items: center;
+    margin: 1rem;
+}
+
+.input_fields .bottom_container span {
+    display: inline;
+    margin: 1rem 1rem;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+.input_fields .bottom_container .a {
+    display: inline;
+    margin-top: 3px;
+    flex-direction: column;
+}
+
+.remember {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.input_fields .button {
+    margin: 1rem 0.5rem;
+    display: flex;
+    flex-direction: row;
+    border: none;
+    justify-content: space-around;
+    width: auto;
+    background-color: blue;
+    border-radius: 6px;
+    padding: 0.5rem;
+    font-family: Plus Jakarta Sans;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 1rem;
+    line-height: 27px;
+    text-align: center;
+    color: #FFFFFF;
+    cursor: pointer;
+    transition: all 0.25s ease-in;
+}
+
+.input:focus {
+    border-bottom: 3px solid blue;
+}
+
+.button:hover {
+    background: rgba(13, 177, 161, 0.78);
+}
+
+.button:active {
+    transform: scale(0.98);
+}
+
+.input_fields p {
+    text-align: center;
+    font-family: Plus Jakarta Sans;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 1rem;
+    line-height: 27px;
+    text-align: center;
+    cursor: pointer;
+}
+
+@media only screen and (max-width: 800px) {
+    /* .inner_container {
+        padding: 10vh 5vw 15vh;
+        border-radius: 0;
+    } */
+    .logo {
+        padding: 0rem 5vw 5vh;
+    }
+}
