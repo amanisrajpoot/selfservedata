@@ -295,7 +295,7 @@ export default function ManageDataset({
                              <CatalogCardOut token={token} localDataset={localDataset}
                                               setLocalDataset={setLocalDataset} localTitle={localTitle} setLocalTitle={setLocalTitle}
                                               localDescription={localDescription}setLocalDescription={setLocalDescription} localTopic={localTopic}
-                                              setLocalTopic={setLocalTopic}data={dataSource} datasetMode={datasetMode} setDatasetMode={setDatasetMode}
+                                              setLocalTopic={setLocalTopic}data={dataSourceData} datasetMode={datasetMode} setDatasetMode={setDatasetMode}
                                               dataSources={dataSources}setDataSources={setDataSources} userdataset={userdataset} setUserDataset={setUserDataset}
                                               deleteF={deleteF} updateF={updateF} currentTopic={currentTopic} setCurrentTopic={setCurrentTopic}
                             />
@@ -331,11 +331,11 @@ export default function ManageDataset({
                             <div style={{ width:"100%",  display:'flex', flexDirection:'column',paddingLeft:'0.75em',paddingRight:'0.75em',
                                 justifyContent:"center",alignItems:'center', border:'1px solid #E2E2EA', borderRadius:'1rem', paddingTop:'0.75rem',
                                 backgroundColor:'#FAFAFB'}}>
-                                {       filteredDataSources !== null && filteredDataSources !== undefined &&
-                                                filteredDataSources.filter((data)=> String(data.ID) !== String(catalogID)).length === 0 || 
-                                                filteredDataSources.filter((data)=> String(data.ID) !== String(catalogID)).length < 0 ? 
+                                {       dataSources !== null && dataSources !== undefined &&
+                                                dataSources.filter((data)=> String(data.ID) !== String(catalogID)).length === 0 || 
+                                                dataSources.filter((data)=> String(data.ID) !== String(catalogID)).length < 0 ? 
                                                     <div>We are working on adding more catalogs to our platform.</div>:
-                                                filteredDataSources.filter((data)=> String(data.ID) !== String(catalogID)).map((data,index)=> 
+                                                    dataSources.filter((data)=> String(data.ID) !== String(catalogID)).map((data,index)=> 
                                                     index < 5 && data.title.length > 0 ? <FeatureCard
                                                         key={data.ID}
                                                         data={data}
@@ -351,7 +351,7 @@ export default function ManageDataset({
                                                         handleOpenDetails={handleOpenDetails}
                                                         handleCloseDetails={handleCloseDetails}/> :
                                                         index < 5 &&
-                                                        <div>We are working on adding more catalogs to our platform.</div> )
+                                                        <div>Add more catalogs to get results here.</div> )
                                 }
                             </div>
 

@@ -44,7 +44,7 @@ export default function CatalogCardOut({token, data, datasetMode, setDatasetMode
                   wordWrap: "break-word", whiteSpace: "pre-wrap", wordBreak: "break-word", justifyContent:'space-around',
                   alignItems:'space-around'}}>
    
-                    <div><b>{data.title?data.title:""}</b></div>
+                    <div><b>{data.title}{data.title?data.title:""}</b></div>
                     <div>{data.description?data.description:""} </div>
                       <div style={{display:'flex', alignItems:'center'}}><b>{"Topics:  "}</b>
                           {data.topic?data.topic.split(',').map((topic, index)=>index < 6 && <Tooltip2 title={<h2>{topic}</h2>} arrow><Button sx={{borderRadius:4, 

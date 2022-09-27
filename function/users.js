@@ -251,3 +251,16 @@ export async function getDataSourceInfoByID(token, dataSource){
     const res = await fetch(BASE_API_BACKEND+"/GetDataSourceInfoByID", req)
     return res.json()
 }
+
+export async function saveDataSourceInfo( dataSource){
+    const req = {
+        method:"POST",
+        headers: {
+             'Content-Type': 'application/json',
+             //'authorization': token
+         },
+        body: JSON.stringify(dataSource)
+    };
+    const res = await fetch(BASE_API_BACKEND+"/SaveDataSourceInfo", req)
+    return res.json()
+}

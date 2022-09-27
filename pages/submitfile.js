@@ -23,6 +23,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { withStyles } from '@material-ui/core/styles';
 import {confirmSignUp, signIn, signUp, recieveOTP} from "../function/checkAuth";
+import {saveDataSourceInfo} from "../function/users"
 import {getUser, createUser} from "../function/users";
 import OtpInput from 'react-otp-input';
 import mixpanel from 'mixpanel-browser';
@@ -34,7 +35,7 @@ import IconButton from '@mui/material/IconButton';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
-// import S3 from 'react-aws-s3';
+import S3 from 'react-aws-s3';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 
@@ -60,7 +61,7 @@ function Copyright(props) {
   );
 }
 
-const SubmitFile =({token, setToken, name, setName, email, setEmail, company, setCompany}) => {
+const SubmitFile =({token, setToken, name, setName, email, setEmail, company, setCompany,user, setuser,}) => {
 
     useEffect(()=>{
         console.log("signup page token for the confirm user function", token)
@@ -97,12 +98,28 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
 		/>
 	));
 
+    useEffect(async () => {
+        if(token !== 0 && token && token !== null && token !== undefined &&
+            user !== {} && user !== null && user !== undefined){
+            console.log('get users called from dashboard', token);
+            const userP = await getUser(token);
+            if(userP === null || userP === undefined ){
+                setuser({})
+            } else{
+                setuser(userP)
+            }
+            console.log('userP', userP);
+        }
+    }, [token]);
+
     const router = useRouter()
-    // const [name, setName] = useState("")
-    // const [company, setCompany] = useState("")
-    // const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
+    const [dataSourceName, setDataSourceName] = useState("")
+    const [dataSourceDescription, setDataSourceDescription] = useState("")
+    const [dataSourceTopic, setDataSourceTopic] = useState("");
+    const [dataSourceFileLink, setDataSourceFileLink] = useState("");
+    const [dataSourceS3FileURL, setDataSourceS3FileURL] = useState("");
+    const [dataSourceFileFormat,setDataSourceFileFormat] = useState("");
+    const [dataSourceFileSource, setDataSourceFileSource] = useState("");
     const [error, setError] = useState("");
     const [isLoading, setisLoading] = useState(false);
     const [topPadding, setTopPadding] = useState(6)
@@ -114,14 +131,52 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
     const [passwordError, setPasswordError] = useState(false)
     const [confirmPasswordError, setConfirmPasswordError] = useState(false)
     const [companyError, setCompanyError] = useState(false)
-    const [user, setUser] = useState(false)
     const [showPassword, setShowPassword] = useState(false);
     const handleClickShowPassword = () => setShowPassword(!showPassword);
     const handleMouseDownPassword = () => setShowPassword(!showPassword);
     const [passwordType, setPasswordType] = useState('password');
     const [files, setFiles] = React.useState([]);
-
     const [selectedFile, setSelectedFile] = useState(null);
+
+    const [dataSourceBarebone, setDataSourceBareBone] = useState(
+        {
+            "requestParameter": {
+              "id": 0,
+              "created_at": null,
+              "updated_at": null,
+              "deleted_at": null,
+              "user_email": "",
+              "title": "",
+              "description": "",
+              "topic": "",
+              "refresh_rate": "",
+              "row_count": 0,
+              "data_points": 0,
+              "features": "",
+              "data_sources": 0,
+              "status": "",
+              "range": "",
+              "template": 0,
+              "refreshed_at": null,
+              "public_list": null,
+              "ss_user_id": 1,
+              "dataset_file_name": "",
+              "dataset_file_desc": "",
+              "dataset_uploaded_file_name": "",
+              "dataset_upload_file_path": "",
+              "dataset_is_processed": 0,
+              "dataset_process_date": null,
+              "dataset_process_error": "",
+              "further_analysis_required": 0,
+              "source_description": "",
+              "source_url": "test source url",
+              "source_dataset_url": "test source dataset URL",
+              "time_horizon": "",
+              "source_subscription_type": "",
+              "source_data_format": "excel"
+            }
+          }
+    )
 
     // the configuration information is fetched from the .env file
     const config = {
@@ -133,16 +188,26 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
 
     const handleFileInput = (e) => {
         setSelectedFile(e.target.files[0]);
-    }
-
-    const uploadFile = async (file) => {
         const ReactS3Client = new S3(config);
         // the name of the file uploaded is used to upload it to S3
         ReactS3Client
-        .uploadFile(file, file.name)
-        .then(data => console.log(data.location))
+        .uploadFile(e.target.files[0], e.target.files[0].name)
+        .then(data => {
+            console.log(data.location)
+            setDataSourceS3FileURL(data.location)
+            console.log(dataSourceS3FileURL)
+        })
         .catch(err => console.error(err))
     }
+
+    // const uploadFile = async (file) => {
+    //     const ReactS3Client = new S3(config);
+    //     // the name of the file uploaded is used to upload it to S3
+    //     ReactS3Client
+    //     .uploadFile(file, file.name)
+    //     .then(data => console.log(data.location))
+    //     .catch(err => console.error(err))
+    // }
 
     async function signInFK(){
         setMode(1);
@@ -152,23 +217,43 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
     }
 
     async function signUpF() {
-        console.log("starting user first time registration")
-        const erro = await signUp({
-            email,
-            //phone: '+1' + phone,
-            password,
-            name,
-            company,
-            token,
-            setToken
+        console.log("uploading datasource to the database")
+        const erro = await saveDataSourceInfo({
+            "requestParameter": {
+                "title":dataSourceName,
+                "description":dataSourceDescription,
+                "topic":dataSourceTopic,
+                "source_description":dataSourceFileSource,
+                "source_url":dataSourceFileLink,
+                "dataset_uploaded_file_name":selectedFile.name,
+                "dataset_upload_file_path":dataSourceS3FileURL,
+                "source_data_format":dataSourceFileFormat,
+                "user_email": user.email,
+                "refresh_rate": "",
+                "row_count": 0,
+                "data_points": 0,
+                "features": "",
+                "data_sources": 0,
+                "status": "",
+                "range": "",
+                "template": 0,
+                "ss_user_id": user.ID,
+                "dataset_file_name": "",
+                "dataset_file_desc": "",
+                "dataset_is_processed": 0,
+                "dataset_process_error": "",
+                "further_analysis_required": 0,
+                "source_dataset_url": "",
+                "time_horizon": "",
+                "source_subscription_type": "",
 
+            }
         });
         await sleep(2000);
         if (erro === null) {
             setError(erro);
             setMode(1)
-            setTopPadding('12em')
-            setBottomTopPadding('12em')
+            
         } else {
             setError(erro);
             console.log('server error', erro)
@@ -202,6 +287,7 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
                 //await sleep(2000);
                 console.log("confirmSignup after confirming from amplify:",erro)
                 await signIn({email, password, token, setToken});
+
                 await sleep(2000);
                 console.log('token in the confirm signup function page 12', token)
                 //await router.push('/accountcreated');
@@ -410,7 +496,7 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
                                             autoComplete="name"
                                             helperText="Incorrect Datasource Name"
                                             autoFocus
-                                            onChange={(e) => setName(e.target.value)}
+                                            onChange={(e) => setDataSourceName(e.target.value)}
                                             InputProps={{
                                                 startAdornment: (
                                                     <InputAdornment position="start">
@@ -428,7 +514,7 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
                                                 name="name"
                                                 autoComplete="name"
                                                 autoFocus
-                                                onChange={(e) => setName(e.target.value)}
+                                                onChange={(e) => setDataSourceName(e.target.value)}
                                                 InputProps={{
                                                     startAdornment: (
                                                         <InputAdornment position="start">
@@ -444,15 +530,15 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
                                                 margin="normal"
                                                 required
                                                 sx={{width: "100%"}}
-                                                id="company"
+                                                id="description"
                                                 label="Datasource Description"
-                                                name="company"
-                                                autoComplete="company"
+                                                name="description"
+                                                autoComplete="Description"
                                                 rows={4}
                                                 multiline
                                                 helperText="Incorrect Datasource Description"
                                                 autoFocus
-                                                onChange={(e) => setCompany(e.target.value)}
+                                                onChange={(e) => setDataSourceDescription(e.target.value)}
                                                 InputProps={{
                                                     startAdornment: (
                                                         <InputAdornment position="start">
@@ -465,14 +551,14 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
                                                 margin="normal"
                                                 required
                                                 sx={{width: "100%"}}
-                                                id="company"
+                                                id="description"
                                                 label="Datasource Description"
-                                                name="company"
-                                                autoComplete="company"
+                                                name="description"
+                                                autoComplete="Description"
                                                 rows={2}
                                                 multiline
                                                 autoFocus
-                                                onChange={(e) => setCompany(e.target.value)}
+                                                onChange={(e) => setDataSourceDescription(e.target.value)}
                                                 InputProps={{
                                                     startAdornment: (
                                                         <InputAdornment position="start">
@@ -488,38 +574,38 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
                                                 margin="normal"
                                                 required
                                                 sx={{width: "100%"}}
-                                                id="company"
-                                                label="Domain Entity Associated"
-                                                name="company"
-                                                autoComplete="company"
-                                                helperText="Incorrect Domain Entity Associated"
+                                                id="topic"
+                                                label="Domain Entity Associated (Topic)"
+                                                name="topic"
+                                                autoComplete="Topic"
+                                                helperText="Incorrect Domain Entity Associated (Topic)"
                                                 autoFocus
-                                                onChange={(e) => setCompany(e.target.value)}
+                                                onChange={(e) => setDataSourceTopic(e.target.value)}
                                                 InputProps={{
                                                     startAdornment: (
                                                         <InputAdornment position="start">
                                                             <BusinessIcon/>
                                                         </InputAdornment>
                                                     ),
-                                                    placeholder: "Domain Entity Associated"
+                                                    placeholder: "Domain Entity Associated (Topic)"
                                                 }}
                                             /> : <TextField
                                                 margin="normal"
                                                 required
                                                 sx={{width: "100%"}}
-                                                id="company"
-                                                label="Domain Entity Associated"
-                                                name="company"
-                                                autoComplete="company"
+                                                id="topic"
+                                                label="Domain Entity Associated (Topic)"
+                                                name="topic"
+                                                autoComplete="Topic"
                                                 autoFocus
-                                                onChange={(e) => setCompany(e.target.value)}
+                                                onChange={(e) => setDataSourceTopic(e.target.value)}
                                                 InputProps={{
                                                     startAdornment: (
                                                         <InputAdornment position="start">
                                                             <BusinessIcon/>
                                                         </InputAdornment>
                                                     ),
-                                                    placeholder: "Domain Entity Associated"
+                                                    placeholder: "Domain Entity Associated (Topic)"
                                                 }}
                                             />}
 
@@ -528,38 +614,38 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
                                                 margin="normal"
                                                 required
                                                 sx={{width: "100%"}}
-                                                id="company"
+                                                id="fileSource"
                                                 label="Datasource URL"
-                                                name="company"
-                                                autoComplete="company"
-                                                helperText="Incorrect Datasource URL"
+                                                name="fileSource"
+                                                autoComplete="File Source"
+                                                helperText="Incorrect Datasource File Source"
                                                 autoFocus
-                                                onChange={(e) => setCompany(e.target.value)}
+                                                onChange={(e) => setDataSourceFileSource(e.target.value)}
                                                 InputProps={{
                                                     startAdornment: (
                                                         <InputAdornment position="start">
                                                             <BusinessIcon/>
                                                         </InputAdornment>
                                                     ),
-                                                    placeholder: "Datasource URL"
+                                                    placeholder: "Datasource File Source"
                                                 }}
                                             /> : <TextField
                                                 margin="normal"
                                                 required
                                                 sx={{width: "100%"}}
-                                                id="company"
-                                                label="Datasource URL"
-                                                name="company"
-                                                autoComplete="company"
+                                                id="fileSource"
+                                                label="Datasource File Source"
+                                                name="fileSource"
+                                                autoComplete="File Source"
                                                 autoFocus
-                                                onChange={(e) => setCompany(e.target.value)}
+                                                onChange={(e) => setDataSourceFileSource(e.target.value)}
                                                 InputProps={{
                                                     startAdornment: (
                                                         <InputAdornment position="start">
                                                             <BusinessIcon/>
                                                         </InputAdornment>
                                                     ),
-                                                    placeholder: "Datasource URL"
+                                                    placeholder: "Datasource File Source"
                                                 }}
                                             />}
 
@@ -568,38 +654,38 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
                                                 margin="normal"
                                                 required
                                                 sx={{width: "100%"}}
-                                                id="email"
-                                                label="Datasource File Format"
-                                                name="email"
-                                                autoComplete="email"
+                                                id="fileSourceLink"
+                                                label="Datasource File Source Link"
+                                                name="fileSourceLink"
+                                                autoComplete="File Source Link"
                                                 autoFocus
                                                 helperText="Invalid Datasource File Format"
-                                                onChange={(e) => setEmail(e.target.value)}
+                                                onChange={(e) => setDataSourceFileLink(e.target.value)}
                                                 InputProps={{
                                                     startAdornment: (
                                                         <InputAdornment position="start">
-                                                            <EmailIcon/>
+                                                            <InsertDriveFileIcon/>
                                                         </InputAdornment>
                                                     ),
-                                                    placeholder: "Email Address"
+                                                    placeholder: "File Source Link"
                                                 }}
                                             /> : <TextField
                                                 margin="normal"
                                                 required
                                                 sx={{width: "100%"}}
-                                                id="email"
-                                                label="Datasource File Format"
-                                                name="email"
-                                                autoComplete="email"
+                                                id="fileSourceLink"
+                                                label="Datasource File Source Link"
+                                                name="fileSourceLink"
+                                                autoComplete="File Source Link"
                                                 autoFocus
-                                                onChange={(e) => setEmail(e.target.value)}
+                                                onChange={(e) => setDataSourceFileLink(e.target.value)}
                                                 InputProps={{
                                                     startAdornment: (
                                                         <InputAdornment position="start">
-                                                            <EmailIcon/>
+                                                            <InsertDriveFileIcon/>
                                                         </InputAdornment>
                                                     ),
-                                                    placeholder: "Datasource File Format"
+                                                    placeholder: "File Source Link"
                                                 }}
                                             />}
 
@@ -623,192 +709,50 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
                                                     Browse
                                                     <input hidden type="file" onChange={handleFileInput} />
                                                 </Button>
-                                                <Button variant="contained" component="label" style={{backgroundColor: "#5A00E2"}}
-                                                    onClick={() => uploadFile(selectedFile)}> Upload to S3</Button>
+                                                <div  style={{minHeight:'100%',  paddingTop:'0.75rem', paddingBottom:'0.75rem',paddingLeft:"0.5rem"}}
+                                                    > {selectedFile && selectedFile.name}</div>
                                             </div>}
-
+                                            
                                             {usernameError ? <TextField
                                                 error
                                                 margin="normal"
                                                 required
                                                 sx={{width: "100%"}}
-                                                id="email"
-                                                label="Datasource File Source"
-                                                name="email"
-                                                autoComplete="email"
+                                                id="fileFormat"
+                                                label="Datasource File Format"
+                                                name="fileFormat"
+                                                autoComplete="File Format"
                                                 autoFocus
                                                 helperText="Invalid Datasource File Format"
-                                                onChange={(e) => setEmail(e.target.value)}
+                                                onChange={(e) => setDataSourceFileFormat(e.target.value)}
                                                 InputProps={{
                                                     startAdornment: (
                                                         <InputAdornment position="start">
-                                                            <InsertDriveFileIcon/>
+                                                            <EmailIcon/>
                                                         </InputAdornment>
                                                     ),
-                                                    placeholder: "Datasource File Source"
+                                                    placeholder: "Datasource File Format"
                                                 }}
                                             /> : <TextField
                                                 margin="normal"
                                                 required
                                                 sx={{width: "100%"}}
-                                                id="email"
-                                                label="Datasource File Source"
-                                                name="email"
-                                                autoComplete="email"
+                                                id="fileFormat"
+                                                label="Datasource File Format"
+                                                name="fileFormat"
+                                                autoComplete="File Format"
                                                 autoFocus
-                                                onChange={(e) => setEmail(e.target.value)}
+                                                onChange={(e) => setDataSourceFileFormat(e.target.value)}
                                                 InputProps={{
                                                     startAdornment: (
                                                         <InputAdornment position="start">
-                                                            <InsertDriveFileIcon/>
+                                                            <EmailIcon/>
                                                         </InputAdornment>
                                                     ),
-                                                    placeholder: "Datasource File Source"
+                                                    placeholder: "Datasource File Format"
                                                 }}
                                             />}
 
-                                            {usernameError ? <TextField
-                                                error
-                                                margin="normal"
-                                                required
-                                                sx={{width: "100%"}}
-                                                id="email"
-                                                label="Datasource File Source Link"
-                                                name="email"
-                                                autoComplete="email"
-                                                autoFocus
-                                                helperText="Invalid Datasource File Format"
-                                                onChange={(e) => setEmail(e.target.value)}
-                                                InputProps={{
-                                                    startAdornment: (
-                                                        <InputAdornment position="start">
-                                                            <InsertDriveFileIcon/>
-                                                        </InputAdornment>
-                                                    ),
-                                                    placeholder: "File Source Link"
-                                                }}
-                                            /> : <TextField
-                                                margin="normal"
-                                                required
-                                                sx={{width: "100%"}}
-                                                id="email"
-                                                label="Datasource File Source Link"
-                                                name="email"
-                                                autoComplete="email"
-                                                autoFocus
-                                                onChange={(e) => setEmail(e.target.value)}
-                                                InputProps={{
-                                                    startAdornment: (
-                                                        <InputAdornment position="start">
-                                                            <InsertDriveFileIcon/>
-                                                        </InputAdornment>
-                                                    ),
-                                                    placeholder: "File Source Link"
-                                                }}
-                                            />}
-
-                                            {/* {passwordError ? <TextField
-                                                error
-                                                margin="normal"
-                                                required
-                                                sx={{width: "100%"}}
-                                                name="password"
-                                                label="Enter Password"
-                                                type={showPassword ? "text" : "password"}s
-                                                id="password"
-                                                autoComplete="current-password"
-                                                helperText="Invalid Password"
-                                                onChange={(e) => setPassword(e.target.value)}
-                                                InputProps={{
-                                                    startAdornment: (
-                                                        <InputAdornment position="start">
-                                                            <LockIcon/>
-                                                        </InputAdornment>
-                                                    ),
-                                                    placeholder: "Enter Password",
-                                                    endAdornment: (
-                                                        <InputAdornment position="end">
-                                                          <IconButton
-                                                            aria-label="toggle password visibility"
-                                                            onClick={handleClickShowPassword}
-                                                            onMouseDown={handleMouseDownPassword}
-                                                          >
-                                                            {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
-                                                          </IconButton>
-                                                        </InputAdornment>
-                                                      )
-                                                }}
-                                            /> : <TextField
-                                                margin="normal"
-                                                required
-                                                sx={{width: "100%"}}
-                                                name="password"
-                                                label="Enter Password"
-                                                type={showPassword ? "text" : "password"}
-                                                id="password"
-                                                autoComplete="current-password"
-                                                onChange={(e) => setPassword(e.target.value)}
-                                                InputProps={{
-                                                    startAdornment: (
-                                                        <InputAdornment position="start">
-                                                            <LockIcon/>
-                                                        </InputAdornment>
-                                                    ),
-                                                    placeholder: "Enter Password",
-                                                    endAdornment: (
-                                                        <InputAdornment position="end">
-                                                          <IconButton
-                                                            aria-label="toggle password visibility"
-                                                            onClick={handleClickShowPassword}
-                                                            onMouseDown={handleMouseDownPassword}
-                                                          >
-                                                            {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
-                                                          </IconButton>
-                                                        </InputAdornment>
-                                                      )
-                                                }}
-                                            />}
-
-                                            {confirmPasswordError ? <TextField
-                                                error
-                                                margin="normal"
-                                                required
-                                                sx={{width: "100%"}}
-                                                name="confirmPassword"
-                                                label="Confirm Password"
-                                                type="password"
-                                                id="confirmpassword"
-                                                autoComplete="confirmPassword"
-                                                helperText="Please match the password"
-                                                onChange={(e) => setConfirmPassword(e.target.value)}
-                                                InputProps={{
-                                                    startAdornment: (
-                                                        <InputAdornment position="start">
-                                                            <LockIcon/>
-                                                        </InputAdornment>
-                                                    ),
-                                                    placeholder: "Confirm Password"
-                                                }}
-                                            /> : <TextField
-                                                margin="normal"
-                                                required
-                                                sx={{width: "100%"}}
-                                                name="confirmPassword"
-                                                label="Confirm Password"
-                                                type="password"
-                                                id="confirmpassword"
-                                                autoComplete="confirmPassword"
-                                                onChange={(e) => setConfirmPassword(e.target.value)}
-                                                InputProps={{
-                                                    startAdornment: (
-                                                        <InputAdornment position="start">
-                                                            <LockIcon/>
-                                                        </InputAdornment>
-                                                    ),
-                                                    placeholder: "Confirm Password",
-                                                    
-                                                }}
-                                            />} */}
                                         <div style={{color:'red'}}>{error? <>{error}</>:null}</div>
                                             <Button
                                                 type="submit"
@@ -821,7 +765,7 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
                                                     width: "100%",
                                                     backgroundColor: "#5A00E2"
                                                 }}
-                                                onClick={checkFields}
+                                                onClick={signUpF}
                                                 // href="/dashboard"
                                             >
                                                 Submit Datasource
