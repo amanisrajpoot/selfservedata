@@ -137,6 +137,7 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
     const [passwordType, setPasswordType] = useState('password');
     const [files, setFiles] = React.useState([]);
     const [selectedFile, setSelectedFile] = useState(null);
+    const [fileUploadWait, setFileUploadWait] = useState(true);
 
     const [dataSourceBarebone, setDataSourceBareBone] = useState(
         {
@@ -182,8 +183,8 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
     const config = {
         bucketName: "s3-fileupload-test02",
         region: "us-east-2",
-        accessKeyId: "AKIAQOU6ADFZRNMCTQB4",
-        secretAccessKey: "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",
+        accessKeyId: "AKIAQOU6ADFZ3BYAKTON",
+        secretAccessKey: "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",
     }
 
     const handleFileInput = (e) => {
@@ -195,6 +196,7 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
         .then(data => {
             console.log(data.location)
             setDataSourceS3FileURL(data.location)
+            setFileUploadWait(false)
             console.log(dataSourceS3FileURL)
         })
         .catch(err => console.error(err))
@@ -217,47 +219,53 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
     }
 
     async function signUpF() {
-        console.log("uploading datasource to the database")
-        const erro = await saveDataSourceInfo({
-            "requestParameter": {
-                "title":dataSourceName,
-                "description":dataSourceDescription,
-                "topic":dataSourceTopic,
-                "source_description":dataSourceFileSource,
-                "source_url":dataSourceFileLink,
-                "dataset_uploaded_file_name":selectedFile.name,
-                "dataset_upload_file_path":dataSourceS3FileURL,
-                "source_data_format":dataSourceFileFormat,
-                "user_email": user.email,
-                "refresh_rate": "",
-                "row_count": 0,
-                "data_points": 0,
-                "features": "",
-                "data_sources": 0,
-                "status": "",
-                "range": "",
-                "template": 0,
-                "ss_user_id": user.ID,
-                "dataset_file_name": "",
-                "dataset_file_desc": "",
-                "dataset_is_processed": 0,
-                "dataset_process_error": "",
-                "further_analysis_required": 0,
-                "source_dataset_url": "",
-                "time_horizon": "",
-                "source_subscription_type": "",
-
-            }
-        });
-        await sleep(2000);
-        if (erro === null) {
-            setError(erro);
-            setMode(1)
-            
+        if(fileUploadWait === true){
+            alert("File is still getting uploaded, please wait before submitting.")
         } else {
-            setError(erro);
-            console.log('server error', erro)
-            setMode(0);
+            console.log("uploading datasource to the database")
+            await sleep(1000);
+            const erro = await saveDataSourceInfo({
+                "requestParameter": {
+                    "title":dataSourceName,
+                    "description":dataSourceDescription,
+                    "topic":dataSourceTopic,
+                    "source_description":dataSourceFileSource,
+                    "source_url":dataSourceFileLink,
+                    "dataset_uploaded_file_name":selectedFile.name,
+                    "dataset_upload_file_path":dataSourceS3FileURL,
+                    "source_data_format":dataSourceFileFormat,
+                    "user_email": user.email,
+                    "refresh_rate": "",
+                    "row_count": 0,
+                    "data_points": 0,
+                    "features": "",
+                    "data_sources": 0,
+                    "status": "",
+                    "range": "",
+                    "template": 0,
+                    "ss_user_id": user.ID,
+                    "dataset_file_name": "",
+                    "dataset_file_desc": "",
+                    "dataset_is_processed": 0,
+                    "dataset_process_error": "",
+                    "further_analysis_required": 0,
+                    "source_dataset_url": "",
+                    "time_horizon": "",
+                    "source_subscription_type": "",
+
+                }
+            });
+            await sleep(1000);
+            if (erro.responseData.resultValue === 1) {
+                //setError(erro);
+                await router.push('/browsecatalogue')
+                // setMode(1)
+                
+            } else {
+                //setError(erro);
+                console.log('server error', erro)
+                setMode(0);
+            }
         }
     }
 
@@ -266,11 +274,12 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
         const erro = await recieveOTP({
             email,
         });
-        if (erro === null) {
+        if (erro.responseData.resultValue === 1) {
             setError(erro);
-            setMode(1)
-            setTopPadding("12em")
-            setBottomTopPadding('12em')
+            await router.push('/browsecatalogue')
+            //setMode(1)
+            // setTopPadding("12em")
+            // setBottomTopPadding('12em')
         }else{
             setError(erro);
             console.log('server error', erro)

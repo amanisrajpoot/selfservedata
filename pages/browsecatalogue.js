@@ -96,10 +96,10 @@ export default function BrowseCatalogue({
     const [dataSources, setDataSources] = useState([]);
     const [data, setData] = React.useState({
         "requestParameter": {
-          "value": 1
+          "value": parseInt(user.ID)
         }
       })
-
+    
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -122,7 +122,6 @@ export default function BrowseCatalogue({
     handleTopicFilter(topic)
   })
 
-
     useEffect(async () => {
         if(token !== 0 && token && token !== null && token !== undefined && 
             user !== {} && user !== null && user !== undefined){
@@ -132,10 +131,26 @@ export default function BrowseCatalogue({
                 setuser({});
             }else{
                 setuser(userP)
+                setData({
+                    "requestParameter": {
+                      "value": parseInt(user.ID)
+                    }
+                  })
             }
             console.log('userP', userP);
         }
     }, [token, router]);
+
+    useEffect(async () => {
+        if(token !== 0 && token && token !== null && token !== undefined && 
+            user !== {} && user !== null && user !== undefined){
+                setData({
+                    "requestParameter": {
+                      "value": parseInt(user.ID)
+                    }
+                  })   
+        }
+    }, [router, user]);
 
     useEffect(async () => {
         if(token !== 0 && token && token !== null && token !== undefined){
@@ -148,7 +163,7 @@ export default function BrowseCatalogue({
             }
             console.log('new api datasources', dataSources);
         }
-    }, [token, router]);
+    }, [token, router, data]);
 
     useEffect(async ()=> {
         if(token !== 0 && token !== null && token !== undefined &&
@@ -223,6 +238,7 @@ export default function BrowseCatalogue({
                         index={index}
                         token={token}
                         user={user}
+                        key={data.id}
                         pagesVisited={pagesVisited}
                         usersPerPage={usersPerPage}
                         handleOpenDetails={handleOpenDetails}
