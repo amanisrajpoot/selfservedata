@@ -12,16 +12,14 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import Output from '../../components/output';
 import {useRouter} from 'next/router';
 import {getDatasetsId, downloadDatasetsId, getUser, deleteUserDataset, updateUserDataset, getPublicDatasetsTopics} from '../../function/users';
-import {getDataSourceInfoByID} from '../../function/users';
+import {getDataSourceInfoByID, saveDataSourceInfo} from '../../function/users';
 import DataSourcesDetails from '../../components/datasourcesdetails';
 import AddIcon from '@mui/icons-material/Add';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import mixpanel from 'mixpanel-browser';
-import LeftNav from "../../components/LeftNav";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import {signOut} from "../../function/checkAuth";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import TableViewOutlinedIcon from "@mui/icons-material/TableViewOutlined";
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import GetAppIcon from '@mui/icons-material/GetApp';
+import EditIcon from '@mui/icons-material/Edit';
 import Divider from "@mui/material/Divider";
 import SettingsIcon from "@mui/icons-material/Settings";
 import CachedIcon from '@mui/icons-material/Cached';
@@ -117,7 +115,7 @@ export default function ManageDataset({
     async function updateF(dataF){
         setLocalDataset({...dataF, title:localTitle, description:localDescription,topic:localTopic});
         console.log("updated dataset data", localDataset)
-        const data = await updateUserDataset({token, data:localDataset});
+        const data = await saveDataSourceInfo({token, dataSource:localDataset});
         if(data){
             window.open("/dataset1/"+localDataset.ID, "_self")
         }
@@ -212,52 +210,8 @@ export default function ManageDataset({
 
         <div style={{display:'flex',minWidth:'100%', maxWidth:'100%', flexDirection:'row'}}>
 
-            {/* <Box sx={{width:"18%"}}>
-                <Box sx={{width:"18%", position:'fixed'}}>
-                    <LeftNav token={token} userdatasets={userdatasets} setUserdatasets={setUserdatasets}/>
-                </Box>
-            </Box> */}
             <div style={{display:'flex',flexDirection:'column',minWidth:'100%', maxWidth:'100%',}}>
                 <div style={{ display: 'flex', flexDirection:'column', backgroundColor: '#FAFAFB'}}>
-                    {/* <Box component="main" sx={{  minWidth:'100%', display:'flex', position:'fixed'}}>
-                        <Box sx={{minWidth:'100%', display:'flex', flexDirection:'row', bgcolor:'white', alignItems:'center', height:"70px"}} >
-                        </Box>
-
-                        <div style={{display:"flex",flexDirection:'row', width:'30%', backgroundColor:"#fff",paddingLeft:12,
-                            alignItems: 'center',cursor: 'pointer', justifyContent:'space-around', height:"70px"}}>
-                            <Link href='/login'>
-                                {/* <NotificationsIcon fontSize="large" sx={{color:'#939EAA'}}/> 
-                            </Link>
-                            &nbsp;&nbsp;&nbsp;
-                            <Link >
-                                <AccountCircleIcon onClick={()=>router.push("/settings")} fontSize="large" 
-                                    sx={{color:'#939EAA'}}/>
-                            </Link>
-                            &nbsp;&nbsp;&nbsp;
-                            <p style={{fontSize:20}}>{user && user.firstname ? user.firstname : 'Account'} </p>
-                            &nbsp;&nbsp;&nbsp;
-                            <div
-                                // onClick={()=>signOut({path:router.pathname})}
-                                onClick={handleClickUser}
-                            >
-                                <ArrowDropDownIcon fontSize="large" sx={{color:'#939EAA'}}/>
-                            </div>
-
-                            <Menu
-                                id="basic-menu"
-                                anchorEl={anchorElUser}
-                                open={openUser}
-                                onClose={handleCloseUser}
-                                MenuListProps={{
-                                    'aria-labelledby': 'basic-button',
-                                }}
-                            >
-                                <MenuItem onClick={()=>router.push('/settings')}><SettingsIcon/>&nbsp; Settings</MenuItem>
-                                <MenuItem onClick={()=>router.push('/support')}><LiveHelpIcon/>&nbsp; Support</MenuItem>
-                                <MenuItem onClick={()=>signOut({path:router.pathname})}><ExitToAppIcon/>&nbsp; Sign Out</MenuItem>
-                            </Menu>
-                        </div>
-                    </Box> */}
 
                     <Box sx={{ display: 'flex', flexDirection:'row', py: 2,px:2, justifyContent:'space-between', paddingTop:12}}>
 
@@ -274,6 +228,31 @@ export default function ManageDataset({
                             {/* <Button variant="outlined" size="medium" sx={{borderRadius:3, marginLeft:2, width:'22ch', color:'#000', borderColor:'#939EAA' }}
                                     startIcon={<CachedIcon />} onClick={()=>router.reload()}>
                                 {"Refresh"}</Button> */}
+                        </Box>
+
+                        <Box sx={{display:"flex", alignItems:'center', justifyContent:'space-between',  }}>
+                            {datasetMode==0?<div><DeleteOutlineIcon fontSize="large" sx={{cursor:'pointer',}}
+                                                                    onClick={() => deleteF(userdataset)}/></div>:null}
+
+                            <Menu
+                                id="basic-menu"
+                                anchorEl={anchorEl}
+                                open={open}
+                                onClose={handleClose}
+                                MenuListProps={{
+                                    'aria-labelledby': 'basic-button',
+                                }}
+                            >
+                                <MenuItem onClick={()=>handleDownloadButton()}>Download CSV</MenuItem>
+                                <MenuItem disabled onClick={()=>handleClose}><div><div>XLS </div><div style={{fontSize:12}}>(Enterprise Version)</div></div> </MenuItem>
+                                <MenuItem disabled onClick={()=>handleClose}><div><div>API Configuration</div> <div style={{fontSize:12}}>(Enterprise Version)</div></div></MenuItem>
+                            </Menu>
+                            {datasetMode === 0 ?<Button variant="outlined" size="medium" sx={{borderRadius:3, color:'#000', borderColor:'#939EAA', marginLeft:'1rem'}}
+                                                        startIcon={<EditIcon />} onClick={() => setDatasetMode(1)}>
+                                {"Edit"}</Button>: datasetMode === 1 ?
+                                <Button variant="outlined" size="medium" sx={{borderRadius:3, color:'#000', borderColor:'#939EAA', marginLeft:'1rem'}}
+                                        startIcon={<CheckIcon />} onClick={() => {updateF(userdataset)}}>
+                                    {"Update"}</Button>:null}
                         </Box>
 
                     </Box>

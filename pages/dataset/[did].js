@@ -160,6 +160,7 @@ export default function ManageDataset({
         setUserDataset({...userdataset,catalog:[...userdataset.catalog,data]});
         console.log("catalog added",userdataset)
     };
+
     const removeLocalDatasetcatalog = (data) => {
         const filtered = userdataset.catalog.filter(item => item.ID !== data.ID);
         setUserDataset({...userdataset,catalog:filtered});
@@ -172,6 +173,7 @@ export default function ManageDataset({
         setOpenDetails(true);
         setDSDetails(data);
     };
+
     const handleCloseDetails = () => {
         setOpenDetails(false);
     };

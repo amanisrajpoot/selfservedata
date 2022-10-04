@@ -43,6 +43,7 @@
     "react-chartjs-2": "^4.2.0",
     "react-dom": "^17.0.2",
     "react-draft-wysiwyg": "^1.14.7",
+    "react-dropzone": "^14.2.2",
     "react-loading-overlay": "^1.0.1",
     "react-modal": "^3.15.1",
     "react-modal-hover": "^1.1.13",
@@ -57,7 +58,9 @@
     "react-web-share": "^1.1.0",
     "recharts": "^2.1.8",
     "sweetpagination": "^1.0.15",
-    "terra-profile-image": "^3.41.0"
+    "terra-profile-image": "^3.41.0",
+    "validator": "^13.7.0",
+    "validator-js": "^0.2.1"
   },
   "devDependencies": {
     "eslint": "7.32.0",

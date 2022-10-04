@@ -1,10 +1,13 @@
 import * as React from 'react';
+import styles from "../styles/submitFile.module.css";
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import FormControl from '@mui/material/FormControl';
 import InputAdornment from '@mui/material/InputAdornment';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
 import LockIcon from '@mui/icons-material/Lock';
 import EmailIcon from '@mui/icons-material/Email';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -27,17 +30,17 @@ import {saveDataSourceInfo} from "../function/users"
 import {getUser, createUser} from "../function/users";
 import OtpInput from 'react-otp-input';
 import mixpanel from 'mixpanel-browser';
-import OTPForm from "../components/OtpScreen";
-import {EMAIL_VALIDATOR} from "../function/constants";
-import { Auth } from 'aws-amplify';
-import {useEffect} from "react";
-import IconButton from '@mui/material/IconButton';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import {useEffect, useCallback} from "react";
+import LoadingOverlay from 'react-loading-overlay';
+import SyncLoader from 'react-spinners/SyncLoader';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import S3 from 'react-aws-s3';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-
+import {useDropzone} from 'react-dropzone'
+import RootRef from '@material-ui/core/RootRef'
+import validator from 'validator'
+//import validator from 'validator-js';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 // installed using npm install buffer --save
 //window.Buffer = window.Buffer || require("buffer").Buffer;
@@ -113,6 +116,7 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
     }, [token]);
 
     const router = useRouter()
+    const [isActive, setIsActive] = React.useState(false);
     const [dataSourceName, setDataSourceName] = useState("")
     const [dataSourceDescription, setDataSourceDescription] = useState("")
     const [dataSourceTopic, setDataSourceTopic] = useState("");
@@ -126,11 +130,14 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
     const [bottomTopPadding, setBottomTopPadding] = useState('5em')
     const [mode, setMode] = useState(0)
     const [otp, setOtp] = useState(0)
-    const [nameError, setNameError] = useState(false)
-    const [usernameError, setUsernameError] = useState(false)
-    const [passwordError, setPasswordError] = useState(false)
-    const [confirmPasswordError, setConfirmPasswordError] = useState(false)
-    const [companyError, setCompanyError] = useState(false)
+    const [nameError, setNameError] = useState(false)  
+    const [descriptionError, setDescriptionError] = useState(false)
+    const [topicError, setTopicError] = useState(false)
+    const [fileSourceError, setFileSourceError] = useState(false)
+    const [sourceFileLinkError, setSourceFileLinkError] = useState(false)
+    const [sourceS3FileURLError, setSourceS3FileURLError] = useState(false)
+    const [fileError, setFileError] = useState(false)
+    const [fileFormatError, setFileFormatError] = useState(false)
     const [showPassword, setShowPassword] = useState(false);
     const handleClickShowPassword = () => setShowPassword(!showPassword);
     const handleMouseDownPassword = () => setShowPassword(!showPassword);
@@ -138,46 +145,12 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
     const [files, setFiles] = React.useState([]);
     const [selectedFile, setSelectedFile] = useState(null);
     const [fileUploadWait, setFileUploadWait] = useState(true);
+    const [fileFormat, setFileFormat] = React.useState('');
+    const [fileFormatOptions, setFileFormatOptions] = useState(['.CSV','.DOC','.DOCX','.ODT','.XLS','.XLSX','.ODS','.TXT',])
 
-    const [dataSourceBarebone, setDataSourceBareBone] = useState(
-        {
-            "requestParameter": {
-              "id": 0,
-              "created_at": null,
-              "updated_at": null,
-              "deleted_at": null,
-              "user_email": "",
-              "title": "",
-              "description": "",
-              "topic": "",
-              "refresh_rate": "",
-              "row_count": 0,
-              "data_points": 0,
-              "features": "",
-              "data_sources": 0,
-              "status": "",
-              "range": "",
-              "template": 0,
-              "refreshed_at": null,
-              "public_list": null,
-              "ss_user_id": 1,
-              "dataset_file_name": "",
-              "dataset_file_desc": "",
-              "dataset_uploaded_file_name": "",
-              "dataset_upload_file_path": "",
-              "dataset_is_processed": 0,
-              "dataset_process_date": null,
-              "dataset_process_error": "",
-              "further_analysis_required": 0,
-              "source_description": "",
-              "source_url": "test source url",
-              "source_dataset_url": "test source dataset URL",
-              "time_horizon": "",
-              "source_subscription_type": "",
-              "source_data_format": "excel"
-            }
-          }
-    )
+    const handleFileFormatChange = (event) => {
+        setFileFormat(event.target.value);
+    };
 
     // the configuration information is fetched from the .env file
     const config = {
@@ -188,28 +161,67 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
     }
 
     const handleFileInput = (e) => {
-        setSelectedFile(e.target.files[0]);
         const ReactS3Client = new S3(config);
-        // the name of the file uploaded is used to upload it to S3
+        console.log("acccepted file",acceptedFiles[0].name)
+        setSelectedFile(acceptedFiles[0])
+        setError("Uploading File")
+        //the name of the file uploaded is used to upload it to S3
         ReactS3Client
-        .uploadFile(e.target.files[0], e.target.files[0].name)
+        .uploadFile(acceptedFiles[0], acceptedFiles[0].name)
         .then(data => {
             console.log(data.location)
             setDataSourceS3FileURL(data.location)
             setFileUploadWait(false)
+            setError("You can now submit the datasource")
             console.log(dataSourceS3FileURL)
+            setError(null)
         })
         .catch(err => console.error(err))
+
     }
 
-    // const uploadFile = async (file) => {
-    //     const ReactS3Client = new S3(config);
-    //     // the name of the file uploaded is used to upload it to S3
-    //     ReactS3Client
-    //     .uploadFile(file, file.name)
-    //     .then(data => console.log(data.location))
-    //     .catch(err => console.error(err))
-    // }
+    const onDrop = useCallback(acceptedFiles => {
+        const ReactS3Client = new S3(config);
+        console.log("acccepted file",acceptedFiles[0].name)
+        setError("Uploading File")
+        sleep(2000)
+        setError(null)
+        //the name of the file uploaded is used to upload it to S3
+        ReactS3Client
+        .uploadFile(acceptedFiles[0], acceptedFiles[0].name)
+        .then(data => {
+            console.log(data.location)
+            setDataSourceS3FileURL(data.location)
+            setFileUploadWait(false)
+            setError("You can now submit the datasource")
+            console.log(dataSourceS3FileURL)
+            sleep(2000)
+            setError(null)
+        })
+        .catch(err => console.error(err))
+      }, [])
+
+    const {getRootProps, getInputProps, isDragActive, open, acceptedFiles} = useDropzone({maxFiles:1, accept: {
+        'text/*': ['.DOC','.DOCX','.CSV','.ODT','.XLS','.XLSX','.ODS','.TXT',]
+      }, })
+    const file = acceptedFiles.map(file => (
+        
+        <div key={file.path} style={{paddingBottom:'1.5rem'}}>
+          {file.path} - {(file.size)/1024} KB
+            <div style={{display:'flex', justifyContent:'space-between',}}><Button type="submit" variant="contained"
+                sx={{ mt: 3, mb: 2, borderRadius: 2, py: 2,
+                    width: "40%",backgroundColor: "#5A00E2"}}
+                    onClick={handleFileInput}>Upload File</Button>
+
+                <Button type="submit" variant="contained"
+                    sx={{ mt: 3, mb: 2, borderRadius: 2, py: 2,
+                        width: "40%",backgroundColor: "#5A00E2"}}
+                        onClick={open}>Change File</Button>
+            </div>
+        </div>
+
+        
+      ));
 
     async function signInFK(){
         setMode(1);
@@ -218,12 +230,11 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
 
     }
 
-    async function signUpF() {
+    async function submitDatasource() {
         if(fileUploadWait === true){
             alert("File is still getting uploaded, please wait before submitting.")
         } else {
             console.log("uploading datasource to the database")
-            await sleep(1000);
             const erro = await saveDataSourceInfo({
                 "requestParameter": {
                     "title":dataSourceName,
@@ -255,7 +266,6 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
 
                 }
             });
-            await sleep(1000);
             if (erro.responseData.resultValue === 1) {
                 //setError(erro);
                 await router.push('/browsecatalogue')
@@ -267,52 +277,6 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
                 setMode(0);
             }
         }
-    }
-
-    async function resendOTP() {
-        console.log("resending OTP")
-        const erro = await recieveOTP({
-            email,
-        });
-        if (erro.responseData.resultValue === 1) {
-            setError(erro);
-            await router.push('/browsecatalogue')
-            //setMode(1)
-            // setTopPadding("12em")
-            // setBottomTopPadding('12em')
-        }else{
-            setError(erro);
-            console.log('server error', erro)
-            //setMode(0);
-        }
-    }
-
-    async function confirmSignUpF() {
-            const erro = await confirmSignUp({ email,otp,token, setToken  });
-            console.log("signup confirmation response",erro)
-            // await sleep(2000);
-            if (erro === null) {
-                //await router.push('/accountcreated')
-                //await sleep(2000);
-                console.log("confirmSignup after confirming from amplify:",erro)
-                await signIn({email, password, token, setToken});
-
-                await sleep(2000);
-                console.log('token in the confirm signup function page 12', token)
-                //await router.push('/accountcreated');
-                router.push({
-                    pathname: `/dashboard/`,
-                    query:{
-                        currentRouteTitle:"signup",
-                    }
-                })
-                // }
-                // await signIn({ email, password, token, setToken: createDoctor });
-            } else {
-                console.log('confirmation of user failed with the error', erro)
-                setError(erro);
-                
-            }
     }
 
     function filterEmail(){
@@ -338,66 +302,80 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
       }
 
     function checkFields() {
-        if (name.length < 3) {
-            setError('Name should be atleast 3 letter long');
+        if (dataSourceName.length < 3) {
+            setError('Datasource Name should be atleast 3 letter long');
             setNameError(true)
-            setCompanyError(false)
-            setUsernameError(false)
-            setPasswordError(false)
-            setConfirmPasswordError(false)
-        } else if (company.length < 3) {
-            setError('Company Name should be atleast 3 letter long');
-            setCompanyError(true)
+            setDescriptionError(false)
+            setTopicError(false)
+            setFileSourceError(false)
+            setSourceFileLinkError(false)
+            setSourceS3FileURLError(false)
+            setFileFormatError(false)
+        } else if (dataSourceDescription.length < 49) {
+            setError('Datasource description should be atleast 29 letter long');
             setNameError(false)
-            setUsernameError(false)
-            setPasswordError(false)
-            setConfirmPasswordError(false)
-        } else if (!EMAIL_VALIDATOR.test(email)) {
-            setError('Invalid Email ID');
-            setUsernameError(true)
+            setDescriptionError(true)
+            setTopicError(false)
+            setFileSourceError(false)
+            setSourceFileLinkError(false)
+            setSourceS3FileURLError(false)
+            setFileFormatError(false)
+        } else if (dataSourceTopic.length < 1) {
+            setError('Invalid Topic(s)');
             setNameError(false)
-            setCompanyError(false)
-            setPasswordError(false)
-            setConfirmPasswordError(false)
+            setDescriptionError(false)
+            setTopicError(true)
+            setFileSourceError(false)
+            setSourceFileLinkError(false)
+            setSourceS3FileURLError(false)
+            setFileFormatError(false)
             console.log("email issue",email.split("@")[1])
-        } else if (!filterEmail()) {
-            setError('Public Email Not Allowed');
-            setUsernameError(true)
+        } else if (dataSourceFileSource.length < 2) {
+            setError('Provide a valid Datasource origin');
             setNameError(false)
-            setCompanyError(false)
-            setPasswordError(false)
-            setConfirmPasswordError(false)
-        } else if (password.length < 8) {
-            setError('Invalid password, must be atleast 8 letter long');
-            setPasswordError(true)
+            setDescriptionError(false)
+            setTopicError(false)
+            setFileSourceError(true)
+            setSourceFileLinkError(false)
+            setSourceS3FileURLError(false)
+            setFileFormatError(false)
+        } else if (!validator.isURL(dataSourceFileLink)) {
+            setError('Provide a valid URL');
             setNameError(false)
-            setCompanyError(false)
-            setUsernameError(false)
-            setConfirmPasswordError(false)
-        } else if (password !== confirmPassword) {
-            setError("Passwords don't match.");
-            setConfirmPasswordError(true)
+            setDescriptionError(false)
+            setTopicError(false)
+            setFileSourceError(false)
+            setSourceFileLinkError(true)
+            setSourceS3FileURLError(false)
+            setFileFormatError(false)
+        } else if (dataSourceS3FileURL.length < 1) {
+            setError('File not uploaded yet, please upload the file before submitting.');
             setNameError(false)
-            setCompanyError(false)
-            setUsernameError(false)
-            setPasswordError(false)
+            setDescriptionError(false)
+            setTopicError(false)
+            setFileSourceError(false)
+            setSourceFileLinkError(false)
+            setSourceS3FileURLError(false)
+            setFileFormatError(false)
+        } else if (fileFormat.length < 1) {
+            setError('File format not selected, please select a proper file format.');
+            setNameError(false)
+            setDescriptionError(false)
+            setTopicError(false)
+            setFileSourceError(false)
+            setSourceFileLinkError(false)
+            setSourceS3FileURLError(false)
+            setFileFormatError(true)
         } else {
             setError(null);
-            setConfirmPasswordError(false)
             setNameError(false)
-            setCompanyError(false)
-            setUsernameError(false)
-            setPasswordError(false)
-            signUpF();
-        }
-    }
-    function checkFields2() {
-        if (otp.length < 6) {
-            setError('Invalid OTP');
-        } else {
-            // setError('DONE');
-            confirmSignUpF();
-
+            setDescriptionError(false)
+            setTopicError(false)
+            setFileSourceError(false)
+            setSourceFileLinkError(false)
+            setSourceS3FileURLError(false)
+            setFileFormatError(false)
+            submitDatasource();
         }
     }
 
@@ -415,38 +393,17 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
 
         return (
             <>
+            
             <div className= "signup" style={{ display:'flex',minWidth:'100%', maxWidth:'100%',
             height: '100vh', font:'roboto', justifyContent:'center' }}>
-                {/* <div style={{minWidth:'50%', maxWidth:'50%', height:'110%', backgroundColor:'#0DB1A1', display:'flex', 
-                flexDirection:'column', justifyContent:'center', alignItems:'center',
-                    backgroundImage: 'url(/logon-photo03.jpg)',
-                    // backgroundRepeat: 'no-repeat',
-                    backgroundColor: (t) =>
-                    t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
-                    backgroundSize: 'cover',
-                    // backgroundPosition: 'left',
-                    
-                }}>
-                </div> */}
                     <div  style={{display:'flex', minWidth:'70%', maxWidth:'70%',
                          flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
                         <div style={{display:'flex',paddingTop:'3em',
                             minWidth:'55%', maxWidth:'55%', height:'90%',
                             flexDirection:'column', justifyContent:'center', alignItems:'center'}}> 
-                               {/*<div style={{
-                                paddingTop: '1em',
-                                width: '100%',
-                                display: 'flex',
-                                justifyContent: 'end'
-                            }}>
-                                <Link sx={{alignSelf: 'end'}} href="/login" variant="body2">
-                                    {"Already have an account? "}
-                                    <div style={{color: "#5A00E2", display: "inline"}}>Log In</div>
-                                </Link>
-                            </div>*/}
 
                             {mode === 0 ?<Button  size="medium" sx={{display:'flex', width:'100%',paddingRight:2,
-                                    justifyContent: 'end'}} startIcon={<ArrowBackIcon />} onClick={()=>router.back()}>
+                                    justifyContent: 'start'}} startIcon={<ArrowBackIcon />} onClick={()=>router.back()}>
                                     {"Back"}</Button> : mode === 1 ? null : null}  
                             
                             <Box
@@ -488,7 +445,11 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
                                     </div>
                                 </> : null}
 
-                                <Box  onSubmit={handleSubmit}
+                                <LoadingOverlay
+                                    active={isActive}
+                                    spinner={<SyncLoader />}
+                                    // text='Loading your content...'
+                                    > <Box  onSubmit={handleSubmit}
                                     sx={{
                                         pt: 1, display: 'flex', flexDirection: 'column', alignItems: 'center',
                                         width: '100%'
@@ -534,7 +495,7 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
                                                 }}
                                             /> }
 
-                                            {companyError ? <TextField
+                                            {descriptionError ? <TextField
                                                 error
                                                 margin="normal"
                                                 required
@@ -578,7 +539,7 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
                                                 }}
                                             />}
 
-                                            {companyError ? <TextField
+                                            {topicError ? <TextField
                                                 error
                                                 margin="normal"
                                                 required
@@ -618,7 +579,7 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
                                                 }}
                                             />}
 
-                                            {companyError ? <TextField
+                                            {fileSourceError ? <TextField
                                                 error
                                                 margin="normal"
                                                 required
@@ -658,7 +619,7 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
                                                 }}
                                             />}
 
-                                            {usernameError ? <TextField
+                                            {sourceFileLinkError ? <TextField
                                                 error
                                                 margin="normal"
                                                 required
@@ -668,7 +629,7 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
                                                 name="fileSourceLink"
                                                 autoComplete="File Source Link"
                                                 autoFocus
-                                                helperText="Invalid Datasource File Format"
+                                                helperText="Invalid Datasource File Link"
                                                 onChange={(e) => setDataSourceFileLink(e.target.value)}
                                                 InputProps={{
                                                     startAdornment: (
@@ -698,69 +659,104 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
                                                 }}
                                             />}
 
-                                            {/* {usernameError ? <Dropzone onChange={updateFiles} value={files}>
-                                                {files.map((file) => (
-                                                    <FileItem {...file} preview />
-                                                ))}
-                                                </Dropzone>
-                                             : <Dropzone 
-                                                    onChange={updateFiles} 
-                                                    value={files}
-                                                    style={{ maxHeight: "10vh" }}>
-                                                    {files.map((file) => (
-                                                 <FileItem {...file} preview />
-                                             ))}
-                                             </Dropzone>} */}
+                                           { fileError ? <Dropzone>
+                                                            {({getRootProps, getInputProps}) => (
+                                                                <div {...getRootProps()}>
+                                                                <input {...getInputProps()} />
+                                                                <p>Drag 'n' drop some files here, or click to select files</p>
+                                                                </div>
+                                                            )}
+                                                            </Dropzone>
 
-                                           {<div style={{display:'flex', justifyContent:'space-between',width:'100%', }}>
-                                                
-                                                <Button variant="contained" component="label" style={{width:'30%',padding:'1rem',backgroundColor: "#5A00E2"}}>
-                                                    Browse
-                                                    <input hidden type="file" onChange={handleFileInput} />
-                                                </Button>
-                                                <div  style={{minHeight:'100%',  paddingTop:'0.75rem', paddingBottom:'0.75rem',paddingLeft:"0.5rem"}}
-                                                    > {selectedFile && selectedFile.name}</div>
-                                            </div>}
+                                           : 
+                                           <div  style={{border:'0.5px solid #bfbfbf', minWidth:'100%', display:'flex', borderRadius:'0.3rem',
+                                                justifyContent:'center', marginBottom:'1.5rem', marginTop:'1rem'}}>
+                                                <section>
+                                                <div  {...getRootProps({className: 'dropzone'})}>
+                                                    <input {...getInputProps()} />
+                                                    {file.length <= 0 ? <div style={{paddingBottom:'0.25rem'}}><p>Drag 'n' drop some files here, or click to select files</p> 
+                                                                        <em style={{display: "block"}}>(You can drop only one file here)</em>
+                                                                        <Button sx={{ mt: 3, mb: 2, borderRadius: 2, py: 2,
+                                                                            width: "40%",backgroundColor: "#5A00E2", color:'#fff'}}
+                                                                            type="button"
+                                                                            variant="contained" onClick={open}>
+                                                                            Select File
+                                                                            </Button></div>
+                                                                        : <p>Selected File</p>
+                                                                        }
+                                                    
+                                                </div>
+                                                <aside>
+                                                    {/*<h4>File</h4>*/}
+                                                    <div>{file}</div>
+                                                </aside>
+                                            </section>
+                                            </div>
+                                            }
                                             
-                                            {usernameError ? <TextField
-                                                error
-                                                margin="normal"
-                                                required
-                                                sx={{width: "100%"}}
-                                                id="fileFormat"
-                                                label="Datasource File Format"
-                                                name="fileFormat"
-                                                autoComplete="File Format"
-                                                autoFocus
-                                                helperText="Invalid Datasource File Format"
-                                                onChange={(e) => setDataSourceFileFormat(e.target.value)}
-                                                InputProps={{
-                                                    startAdornment: (
-                                                        <InputAdornment position="start">
-                                                            <EmailIcon/>
-                                                        </InputAdornment>
-                                                    ),
-                                                    placeholder: "Datasource File Format"
-                                                }}
-                                            /> : <TextField
-                                                margin="normal"
-                                                required
-                                                sx={{width: "100%"}}
-                                                id="fileFormat"
-                                                label="Datasource File Format"
-                                                name="fileFormat"
-                                                autoComplete="File Format"
-                                                autoFocus
-                                                onChange={(e) => setDataSourceFileFormat(e.target.value)}
-                                                InputProps={{
-                                                    startAdornment: (
-                                                        <InputAdornment position="start">
-                                                            <EmailIcon/>
-                                                        </InputAdornment>
-                                                    ),
-                                                    placeholder: "Datasource File Format"
-                                                }}
-                                            />}
+                                            {fileFormatError ? 
+                                                // <TextField
+                                                // error
+                                                // margin="normal"
+                                                // required
+                                                // sx={{width: "100%"}}
+                                                // id="fileFormat"
+                                                // label="Datasource File Format"
+                                                // name="fileFormat"
+                                                // autoComplete="File Format"
+                                                // autoFocus
+                                                // helperText="Invalid Datasource File Format"
+                                                // onChange={(e) => setDataSourceFileFormat(e.target.value)}
+                                                // InputProps={{
+                                                //     startAdornment: (
+                                                //         <InputAdornment position="start">
+                                                //             <EmailIcon/>
+                                                //         </InputAdornment>
+                                                //     ),
+                                                //     placeholder: "Datasource File Format"
+                                                // }}
+                                                <FormControl fullWidth>
+                                                    <InputLabel id="demo-simple-select-label">File Format</InputLabel>
+                                                    <Select
+                                                    error
+                                                    required
+                                                    margin="normal"
+                                                    labelId="demo-simple-select-label"
+                                                    id="demo-simple-select"
+                                                    value={fileFormat}
+                                                    label="FileFormat"
+                                                    name="fileFormat"
+                                                    helperText="Invalid Datasource File Format"
+                                                    autoFocus
+                                                    autoComplete="File Format"
+                                                    onChange={handleFileFormatChange}
+                                                    >
+                                                    {fileFormatOptions.map(formats=> <MenuItem value={formats}>{formats}</MenuItem>)}
+                                                    
+                                                    </Select>
+                                                </FormControl>
+
+                                             : 
+                                                <FormControl fullWidth>
+                                                    <InputLabel id="demo-simple-select-label">File Format</InputLabel>
+                                                    <Select
+                                                    required
+                                                    margin="normal"
+                                                    labelId="demo-simple-select-label"
+                                                    id="demo-simple-select"
+                                                    value={fileFormat}
+                                                    label="FileFormat"
+                                                    name="fileFormat"
+                                                    helperText="Invalid Datasource File Format"
+                                                    autoFocus
+                                                    autoComplete="File Format"
+                                                    onChange={handleFileFormatChange}
+                                                    >
+                                                    {fileFormatOptions.map(formats=> <MenuItem value={formats}>{formats}</MenuItem>)}
+                                                    
+                                                    </Select>
+                                                </FormControl>
+                                            }
 
                                         <div style={{color:'red'}}>{error? <>{error}</>:null}</div>
                                             <Button
@@ -774,7 +770,7 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
                                                     width: "100%",
                                                     backgroundColor: "#5A00E2"
                                                 }}
-                                                onClick={signUpF}
+                                                onClick={checkFields}
                                                 // href="/dashboard"
                                             >
                                                 Submit Datasource
@@ -861,12 +857,14 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
                                     <Copyright sx={{pt: 1}}/> */}
 
                                 </Box>
+                                </LoadingOverlay> 
                             </Box>
 
                         </div>
                     </div>
                 </div>
-            </>    
+              
+            </> 
         );
 
 }

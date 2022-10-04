@@ -31,8 +31,11 @@ export default function CatalogCardOut({token, data, datasetMode, setDatasetMode
     useEffect(() => {console.log("DATATATA",data)})
 
     useEffect(() => {
+        if(data !== null && data !== undefined){
         setCurrentTopic(data.topic)
         console.log("current Topic", currentTopic)
+        }
+        
     }, [data.topic]);
 
     return (

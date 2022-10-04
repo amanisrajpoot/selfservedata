@@ -252,7 +252,7 @@ export async function getDataSourceInfoByID(token, dataSource){
     return res.json()
 }
 
-export async function saveDataSourceInfo( dataSource){
+export async function saveDataSourceInfo(dataSource){
     const req = {
         method:"POST",
         headers: {
