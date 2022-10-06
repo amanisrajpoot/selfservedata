@@ -122,6 +122,15 @@ export default function BrowseCatalogue({
     handleTopicFilter(topic)
   })
 
+  useEffect(()=>{
+    setData({
+        "requestParameter": {
+          "value": parseInt(user.ID)
+        }
+      })
+
+  },[router])
+
     useEffect(async () => {
         if(token !== 0 && token && token !== null && token !== undefined && 
             user !== {} && user !== null && user !== undefined){

@@ -74,6 +74,8 @@ export default function ManageDataset({
     const [localTitle, setLocalTitle] = useState('');
     const [localDescription, setLocalDescription] = useState('');
     const [localTopic, setLocalTopic] = useState('');
+    const [localSource, setLocalSource] = useState('');
+    const [localSourceURL, setLocalSourceURL] = useState('');
     const [localDataset, setLocalDataset] = useState({});
     const [currentTopic, setCurrentTopic] = useState("")
     const [filteredDataSources, setFilteredDataSources] = useState([])
@@ -87,6 +89,24 @@ export default function ManageDataset({
     const [dataSourceData, setDataSourceData] = useState({})
 
     useEffect(()=>{
+            if((dataSource === null || dataSource === undefined) && datasource_id !== null){
+                setDataSource({
+                "requestParameter": {
+                "value": parseInt(datasource_id)
+                }
+            })
+            } else if ((dataSource === null || dataSource === undefined) && datasource_id === null){
+                setDataSource({
+                    "requestParameter": {
+                    "value": parseInt(catalogID)
+                    }
+                })
+
+            }
+        }
+    ,[router, dataSource])
+
+    useEffect(()=>{
         dataSources !== null && dataSources !== undefined &&
         dataSources.map((data,index)=> datasource_id == data.ID && setCurrentRouteTitle(data.title))
     },[])
@@ -96,6 +116,8 @@ export default function ManageDataset({
             setLocalTitle(userdataset.title);
             setLocalDescription(userdataset.description);
             setLocalTopic(userdataset.topic);
+            setLocalSource(userdataset.source_description)
+            setLocalSourceURL(userdataset.source_url)
             setLocalDataset(userdataset)
         }
     }, [userdataset])
@@ -109,15 +131,17 @@ export default function ManageDataset({
     }
 
     useEffect(() => {
-        setLocalDataset({...userdataset, title:localTitle, description:localDescription,topic:localTopic});
-    }, [localTitle, localDescription, localTopic]);
+        setLocalDataset({...userdataset, title:localTitle, description:localDescription,topic:localTopic, 
+            source_description:localSource, source_url:localSourceURL});
+    }, [localTitle, localDescription, localTopic, localSource, localSourceURL]);
 
     async function updateF(dataF){
-        setLocalDataset({...dataF, title:localTitle, description:localDescription,topic:localTopic});
+        setLocalDataset({...dataF, title:localTitle, description:localDescription,topic:localTopic, 
+            source_description:localSource, source_url:localSourceURL});
         console.log("updated dataset data", localDataset)
-        const data = await saveDataSourceInfo({token, dataSource:localDataset});
+        const data = await saveDataSourceInfo({token, requestParameter:localDataset});
         if(data){
-            window.open("/dataset1/"+localDataset.ID, "_self")
+            window.open("/browsecatalogue/", "_self")
         }
     }
 
@@ -125,9 +149,21 @@ export default function ManageDataset({
         if(token !== 0 && token && token !== null && token !== undefined){
             const dataSourced = await getDataSourceInfoByID(token, dataSource);
             setDataSourceData(dataSourced.responseData);
+            setUserDataset(dataSourced.responseData);
             console.log("fetched datasource data",dataSourced.responseData);
         }
     }, [token, datasource_id]);
+
+    useEffect(async () => {
+        if(token !== 0 && token && token !== null && token !== undefined &&
+            userdataset !== [] && userdataset !== null && userdataset !== undefined){
+            const data = await getDatasets(
+                token
+            );
+            setUserdatasets(data);
+            console.log("fetched datasets",data);
+        }
+    }, [token,router]);
 
     const addLocalDatasetcatalog = (data) => {
         setUserDataset({...userdataset,catalog:[...userdataset.catalog,data]});
@@ -166,16 +202,6 @@ export default function ManageDataset({
         }
     }, [token, router]);
 
-    useEffect(async () => {
-        if(token !== 0 && token && token !== null && token !== undefined &&
-            userdataset != [] && userdataset !== null && userdataset !== undefined){
-            const data = await getDatasets(
-                token
-            );
-            setUserdatasets(data);
-            console.log("fetched datasets",data);
-        }
-    }, [token,router]);
 
     useEffect(async ()=>{
         mixpanel.track('Viewed Dataset', {
@@ -208,10 +234,10 @@ export default function ManageDataset({
 
     return (
 
-        <div style={{display:'flex',minWidth:'100%', maxWidth:'100%', flexDirection:'row'}}>
+        <div style={{display:'flex',minWidth:'100%', minHeight:'100%', maxWidth:'100%', flexDirection:'row'}}>
 
-            <div style={{display:'flex',flexDirection:'column',minWidth:'100%', maxWidth:'100%',}}>
-                <div style={{ display: 'flex', flexDirection:'column', backgroundColor: '#FAFAFB'}}>
+            <div style={{display:'flex',flexDirection:'column',minWidth:'100%',minHeight:'100%', maxWidth:'100%',backgroundColor: '#FAFAFB',}}>
+                <div style={{ display: 'flex', flexDirection:'column', backgroundColor: '#FAFAFB', }}>
 
                     <Box sx={{ display: 'flex', flexDirection:'row', py: 2,px:2, justifyContent:'space-between', paddingTop:12}}>
 
@@ -257,8 +283,8 @@ export default function ManageDataset({
 
                     </Box>
 
-                    <Box sx={{ display: 'flex', flexDirection:'row', py: 2,px:2, justifyContent:'space-between'}}>
-                        <Box sx={{ display: 'flex', flexDirection:'row', font:'roboto', fontSize:24,
+                    <Box sx={{ display: 'flex', flexDirection:'row', py: 2,px:2, justifyContent:'space-between', height:'100%'}}>
+                        <Box sx={{ display: 'flex', flexDirection:'row', font:'roboto', fontSize:24,height:'100%',
                             color:'gray-900',justifyContent:'space-around'}}>
                             <div>Data Catalog Overview: &nbsp;</div>{dataSources !== null && dataSources !== undefined &&
                                 <div>{dataSource.title}</div>}
@@ -277,6 +303,7 @@ export default function ManageDataset({
                                               setLocalTopic={setLocalTopic}data={dataSourceData} datasetMode={datasetMode} setDatasetMode={setDatasetMode}
                                               dataSources={dataSources}setDataSources={setDataSources} userdataset={userdataset} setUserDataset={setUserDataset}
                                               deleteF={deleteF} updateF={updateF} currentTopic={currentTopic} setCurrentTopic={setCurrentTopic}
+                                              localSource={localSource} setLocalSource={setLocalSource} localSourceURL={localSourceURL} setLocalSourceURL={setLocalSourceURL}
                             />
                         }
                         </Box>
@@ -292,7 +319,7 @@ export default function ManageDataset({
                     </Box>
                 </Modal>
 
-                <div style={{ display: 'flex', minHeight: '23vh', backgroundColor:'#FAFAFB',pt:4, width:'100%'}}>
+                {/* <div style={{ display: 'flex', minHeight: '23vh', backgroundColor:'#FAFAFB',pt:4, width:'100%'}}>
 
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: '12vh',mb:4, width:'100%', }}>
 
@@ -339,7 +366,7 @@ export default function ManageDataset({
                     </div>
 
 
-                </div>
+                </div> */}
 
                 {/*<Modal*/}
                 {/*    open={open}*/}

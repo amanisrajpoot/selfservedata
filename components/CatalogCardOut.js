@@ -12,31 +12,35 @@ import Tooltip2 from '@mui/material/Tooltip';
 
 export default function CatalogCardOut({token, data, datasetMode, setDatasetMode,localTitle,setLocalTitle,localDescription,
     setLocalDescription, localTopic, setLocalTopic, localDataset, setLocalDataset, userdatasets, setUserDatasets,
-    deleteF, updateF, dataSources, setDataSources, currentTopic, setCurrentTopic
+    deleteF, updateF, dataSources, setDataSources, currentTopic, setCurrentTopic, setLocalSource, setLocalSourceURL,
+    localSource, localSourceURL
 }){
 
     useEffect(() => {
         setLocalTitle(data.title);
         setLocalDescription(data.description);
         setLocalTopic(data.topic);
+        setLocalSource(data.source_description)
+        setLocalSourceURL(data.source_url)
         setLocalDataset(userdatasets)
     }, [userdatasets])
 
     const router = useRouter();
 
     useEffect(() => {
-        setLocalDataset({...userdatasets, title:localTitle, description:localDescription,topic:localTopic});
-    }, [localTitle, localDescription, localTopic]);
+        setLocalDataset({...userdatasets, title:localTitle, description:localDescription,topic:localTopic,
+        source_description:localSource, source_url:localSourceURL});
+    }, [localTitle, localDescription, localTopic, localSource, localSourceURL]);
 
     useEffect(() => {console.log("DATATATA",data)})
 
-    useEffect(() => {
-        if(data !== null && data !== undefined){
-        setCurrentTopic(data.topic)
-        console.log("current Topic", currentTopic)
-        }
+    // useEffect(() => {
+    //     if(data !== null && data !== undefined){
+    //     setCurrentTopic(data.topic)
+    //     console.log("current Topic", currentTopic)
+    //     }
         
-    }, [data.topic]);
+    // }, [data.topic]);
 
     return (
         <div style={{width:"100%",display:"flex", flexDirection:'column',backgroundColor:'#fff',borderRadius:16,minHeight:'34vh', fontSize:'1em'}}>
@@ -47,7 +51,7 @@ export default function CatalogCardOut({token, data, datasetMode, setDatasetMode
                   wordWrap: "break-word", whiteSpace: "pre-wrap", wordBreak: "break-word", justifyContent:'space-around',
                   alignItems:'space-around'}}>
    
-                    <div><b>{data.title}{data.title?data.title:""}</b></div>
+                    <div><b>{data.title?data.title:""}</b></div>
                     <div>{data.description?data.description:""} </div>
                       <div style={{display:'flex', alignItems:'center'}}><b>{"Topics:  "}</b>
                           {data.topic?data.topic.split(',').map((topic, index)=>index < 6 && <Tooltip2 title={<h2>{topic}</h2>} arrow><Button sx={{borderRadius:4, 
@@ -62,7 +66,7 @@ export default function CatalogCardOut({token, data, datasetMode, setDatasetMode
                                   }
                                   })}>{topic.substring(0,17) +".."}</Button></Tooltip2 >)
                               : "6"}</div>
-                      <div style={{display:'flex',width:'100%', }}>
+                      {/* <div style={{display:'flex',width:'100%', }}>
                           <div style={{display:'flex',wordWrap: "break-word",width:'25%',
                               whiteSpace: "pre-wrap", wordBreak: "break-word",  }}>
                               <b>Datasources: </b> {data.data_sources?data.data_sources:"0"}
@@ -82,30 +86,55 @@ export default function CatalogCardOut({token, data, datasetMode, setDatasetMode
                                 border:1, fontSize:"0.75em", mr:1,color:'#24BBFF', textTransform:'capitalize',letterSpacing:'0.1em',}} 
                                 size="small">{feature.substring(0.16)}</Button>)
                                   : "6"}</div>
-                      </div>
+                      </div> */}
+                      <div><b>{"Source: "}</b>{data.source_description?data.source_description:""}</div>
+                    <div><b>{"Source URL: "}</b>{data.source_url?data.source_url:""} </div>
 
               </div>
               : null}
 
-              {datasetMode === 1? <div style={{display:'flex', alignItems:'center', 
-                  justifyContent:'space-between', width:"50%",
+              {datasetMode === 1? <div style={{display:'flex', minWidth:'100%', justifyContent:'space-between'}}>
+                <div style={{display:'flex', alignItems:'center', 
+                  justifyContent:'space-between', width:"45%",
                   wordWrap: "break-word", whiteSpace: "pre-wrap", wordBreak: "break-word"}}>
    
-                  <FormControl fullWidth sx={{ }}>
-                    <p><TextField value={localTitle} size="small" onChange={(e)=>{setLocalTitle(e.target.value)}}
-                    label="Title" variant="outlined" sx={{minWidth:"100%"}}/><br></br><br></br>
-                    <b></b><TextField value={localDescription} size="small" multiline maxRows={5}
-                    onChange={(e)=>{setLocalDescription(e.target.value)}}
-                    label="Description" variant="outlined"sx={{minWidth:"100%"}}/></p>
+                  <FormControl fullWidth sx={{minWidth:'100%' }}>
+                    <TextField value={localTitle} size="small" onChange={(e)=>{setLocalTitle(e.target.value)}}
+                    label="Title" variant="outlined" sx={{minWidth:"100%", paddingBottom:'1rem'}}/>
+                    
+                    <TextField value={localDescription} size="small" multiline maxRows={5}
+                        onChange={(e)=>{setLocalDescription(e.target.value)}}
+                        label="Description" variant="outlined"sx={{minWidth:"100%",paddingBottom:'1rem'}}/>
+                    
                     <TextField value={localTopic} size="small" multiline maxRows={4}
-                onChange={(e)=>{setLocalTopic(e.target.value)}}
-                label="Topic" variant="outlined" />
+                        onChange={(e)=>{setLocalTopic(e.target.value)}}
+                        label="Topic" variant="outlined" sx={{minWidth:"100%",paddingBottom:'1rem'}}/>
+
                     </FormControl>
 
               </div>
+
+                <div style={{display:'flex', alignItems:'center', 
+                justifyContent:'space-between', width:"45%",
+                wordWrap: "break-word", whiteSpace: "pre-wrap", wordBreak: "break-word"}}>
+
+                <FormControl fullWidth sx={{minWidth:'100%' }}>
+                
+                <TextField value={localSource} size="small" multiline maxRows={4}
+                    onChange={(e)=>{setLocalSource(e.target.value)}}
+                    label="Source" variant="outlined" sx={{minWidth:"100%",paddingBottom:'1rem'}}/>
+                
+                <TextField value={localSourceURL} size="small" multiline maxRows={4}
+                    onChange={(e)=>{setLocalSourceURL(e.target.value)}}
+                    label="Sorce URL" variant="outlined" sx={{minWidth:"100%",paddingBottom:'1rem'}}/>
+
+                </FormControl>
+
+                </div>
+            </div>
               : null}
 
-                {datasetMode === 1?
+                {datasetMode === 2?
                 <>
                 <div style={{display:'flex',width:'25%',wordWrap: "break-word", 
                     whiteSpace: "pre-wrap", wordBreak: "break-word" }}>

@@ -81,7 +81,11 @@ export default function TopNav({
         }
     }, []);
 
-
+	useEffect(()=>{
+		if(Auth.user) 
+			console.log('amplify user',Auth.user.attributes.name)
+	
+	  },[])
 
 	return (
 		<div style={{ display:'flex',minWidth:'100%', maxWidth:'100%', position:'fixed', height:'7vh',

@@ -69,10 +69,10 @@ export default function FeatureCard(props){
                                                 parseInt(props.index + 1)}</Button>
               </div>
 
-              <div style={{fontSize:"1em", minWidth:"57%", overflow:'hidden', display:'flex', flexDirection:'column',flex:'start'}}>
-                        <div style={{textOverflow:'clip', overflow:'hidden',paddingBottom:8, paddingRight:'2ch'}}><b>{props.data.title && props.data.title.length > 84 ?
-                            props.data.title.substring(0,81) + "..": props.data.title}</b></div>
-                        <div style={{paddingBottom:8, color:'#939EAA',paddingRight:'4ch'}}>{props.data.description?(router.pathname.includes("/searchresult")?props.data.description.substring(0,119):props.data.description.substring(0,149))+
+              <div style={{fontSize:"1em", minWidth:'50%', maxWidth:"53%", overflow:'hidden', display:'flex', flexDirection:'column',flex:'start'}}>
+                        <div style={{textOverflow:'clip', overflow:'hidden',paddingBottom:8, paddingRight:'2ch'}}><b>{props.data.title && props.data.title.length > 64 ?
+                            props.data.title.substring(0,56) + "..": props.data.title}</b></div>
+                        <div style={{paddingBottom:8, color:'#939EAA',paddingRight:'4ch'}}>{props.data.description?(router.pathname.includes("/searchresult")?props.data.description.substring(0,89):props.data.description.substring(0,89))+
                             "..":"FDA has been very responsible in controlling drug flow"}</div>
                         <div style={{display:'flex', alignItems:'center', fontSize:"0.9em"}}><div style={{paddingRight:4,paddingBottom:4}}><b>{"Topics:  "}</b></div>
                             {props.data.topic?props.data.topic.split(',').map((topic, index)=>index < 3 && <Tooltip2 title={<h2>{topic}</h2>} arrow>
@@ -97,20 +97,24 @@ export default function FeatureCard(props){
                                 : "6"}</div>
                     </div>
 
-                    <div style={{minWidth:'35%', minHeight:'16vh',maxHeight:'16vh',display:'flex', 
+                    <div style={{minWidth:'43%', minHeight:'16vh',maxHeight:'16vh',display:'flex', 
                         flex:'end',justifyContent:'space-between', alignItems:'center', paddingTop:"2vh", paddingBottom:'2vh' }}>
                         <Divider orientation="vertical" flexItem variant="middle"/>
-                        <div style={{ }}>
-                            <div>{router.pathname.includes("/searchresult")?"Features":"Key Features"}<br></br>
+                        <div style={{minWidth:'12%',maxWidth:'12%', }}>
+                            <div><b>{router.pathname.includes("/searchresult")?"Features":"Source"}</b><br></br>
                             </div>
-                            <div><b>{props.data.features?props.data.features.split(",").length.toLocaleString(): "0"}</b></div>
+                            <div style={{textOverflow:'clip', overflow:'hidden',paddingBottom:8, paddingRight:'2ch'}}>{props.data.source_description && props.data.source_description.length > 29 ?
+                            props.data.source_description.substring(0,39) + "..": props.data.source_description}</div>
                         </div>
 
+                        
+
                         <Divider orientation="vertical" variant="middle" flexItem/>
-                        <div style={{}}>
-                            <div>{router.pathname.includes("/searchresult")?"Rows":"No. of Rows"}<br></br>
+                        <div style={{minWidth:'22%', maxWidth:'22%'}}>
+                            <div><b>{router.pathname.includes("/searchresult")?"Rows":"Source URL"}</b><br></br>
                             </div>
-                            <div><b>{props.data.row_count?props.data.row_count.toLocaleString(): "0"}</b></div>
+                            <div>{props.data.source_url && props.data.source_url.length > 29 ?
+                            props.data.source_url.substring(0,39) + "..": props.data.source_url}</div>
                         </div>
                         <Divider orientation="vertical" variant="middle" flexItem/>
 
