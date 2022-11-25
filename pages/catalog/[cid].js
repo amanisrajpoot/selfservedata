@@ -8,11 +8,12 @@ import FeatureCard from '../../components/FeatureCard';
 import EditFeatureCard from '../../components/EditFeatureCard';
 import Modal from '@mui/material/Modal';
 import CheckIcon from '@mui/icons-material/Check';
+import DraftsIcon from '@mui/icons-material/Drafts';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import Output from '../../components/output';
 import {useRouter} from 'next/router';
 import {getDatasetsId, downloadDatasetsId, getUser, deleteUserDataset, updateUserDataset, getPublicDatasetsTopics} from '../../function/users';
-import {getDataSourceInfoByID, saveDataSourceInfo} from '../../function/users';
+import {getDataSourceInfoByID, saveDataSourceInfo, updateSourceStatus} from '../../function/users';
 import DataSourcesDetails from '../../components/datasourcesdetails';
 import AddIcon from '@mui/icons-material/Add';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -77,6 +78,7 @@ export default function ManageDataset({
     const [localSource, setLocalSource] = useState('');
     const [localSourceURL, setLocalSourceURL] = useState('');
     const [localDataset, setLocalDataset] = useState({});
+    const [localStatus, setLocalStatus] = useState('')
     const [currentTopic, setCurrentTopic] = useState("")
     const [filteredDataSources, setFilteredDataSources] = useState([])
     const [relatedDataSources, setRelatedDataSources] = useState([])
@@ -89,11 +91,22 @@ export default function ManageDataset({
     const [dataSourceData, setDataSourceData] = useState({})
 
     useEffect(()=>{
+        if((userdataset === null || userdataset === undefined) && userdataset !== null){
+            
+            setLocalStatus(userdataset.status)
+        }
+        
+    }
+    ,[router, userdataset, ])
+
+
+    useEffect(()=>{
             if((dataSource === null || dataSource === undefined) && datasource_id !== null){
                 setDataSource({
                 "requestParameter": {
                 "value": parseInt(datasource_id)
                 }
+                
             })
             } else if ((dataSource === null || dataSource === undefined) && datasource_id === null){
                 setDataSource({
@@ -104,7 +117,7 @@ export default function ManageDataset({
 
             }
         }
-    ,[router, dataSource])
+    ,[router, dataSource, ])
 
     useEffect(()=>{
         dataSources !== null && dataSources !== undefined &&
@@ -118,6 +131,7 @@ export default function ManageDataset({
             setLocalTopic(userdataset.topic);
             setLocalSource(userdataset.source_description)
             setLocalSourceURL(userdataset.source_url)
+            setLocalStatus(userdataset.status)
             setLocalDataset(userdataset)
         }
     }, [userdataset])
@@ -126,21 +140,45 @@ export default function ManageDataset({
         console.log(dataF)
         const data = await deleteUserDataset({token, data:dataF});
         if(data){
-            window.open("/dashboard1", "_self")
+            window.open("/browsecatalogue", "_self")
         }
     }
 
     useEffect(() => {
         setLocalDataset({...userdataset, title:localTitle, description:localDescription,topic:localTopic, 
-            source_description:localSource, source_url:localSourceURL});
-    }, [localTitle, localDescription, localTopic, localSource, localSourceURL]);
+            source_description:localSource, source_url:localSourceURL,status:localStatus});
+    }, [localTitle, localDescription, localTopic, localSource, localSourceURL, localStatus]);
 
     async function updateF(dataF){
         setLocalDataset({...dataF, title:localTitle, description:localDescription,topic:localTopic, 
-            source_description:localSource, source_url:localSourceURL});
+            source_description:localSource, source_url:localSourceURL, status: localStatus});
         console.log("updated dataset data", localDataset)
         const data = await saveDataSourceInfo({token, requestParameter:localDataset});
         if(data){
+            window.open("/browsecatalogue/", "_self")
+        }
+    }
+
+    async function setActive(dataF){
+        const update = {
+                "Id": dataF.id,
+                "Status": "Archive"
+        }
+        console.log("updated dataset data", localDataset)
+        const data = await updateSourceStatus({token, requestParameter:update});
+        if(data.responseData.resultValue === 1){
+            window.open("/browsecatalogue/", "_self")
+        }
+    }
+
+    async function setArchive(dataF){
+        const update = {
+                "Id": dataF.id,
+                "Status": "Active"
+        }
+        console.log("updated dataset data", localDataset)
+        const data = await updateSourceStatus({token, requestParameter:update});
+        if(data.responseData.resultValue === 1){
             window.open("/browsecatalogue/", "_self")
         }
     }
@@ -175,16 +213,6 @@ export default function ManageDataset({
         console.log("catalog removed",userdataset)
     };
 
-    const [openDetails, setOpenDetails] = useState(false);
-    const [dsDetails, setDSDetails] = useState([]);
-    const handleOpenDetails = (data) => {
-        setOpenDetails(true);
-        setDSDetails(data);
-    };
-    const handleCloseDetails = () => {
-        setOpenDetails(false);
-    };
-
     useEffect(async () => {
         if(token !== 0 && token && token !== null && token !== undefined &&
             user !=={} && user !== null && user !== undefined){
@@ -213,24 +241,6 @@ export default function ManageDataset({
 
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
-    const openUser = Boolean(anchorElUser);
-    const open2 = Boolean();
-
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleClickUser = (event) => {
-        setAnchorElUser(event.currentTarget);
-    };
-
-    const handleClose2 = () => {
-        setAnchorEl(null);
-    };
-
-    const handleCloseUser = () => {
-        setAnchorElUser(null);
-    };
 
     return (
 
@@ -257,8 +267,8 @@ export default function ManageDataset({
                         </Box>
 
                         <Box sx={{display:"flex", alignItems:'center', justifyContent:'space-between',  }}>
-                            {datasetMode==0?<div><DeleteOutlineIcon fontSize="large" sx={{cursor:'pointer',}}
-                                                                    onClick={() => deleteF(userdataset)}/></div>:null}
+                            {/* {datasetMode==0?<div><DeleteOutlineIcon fontSize="large" sx={{cursor:'pointer',}}
+                                                                    onClick={() => deleteF(userdataset)}/></div>:null} */}
 
                             <Menu
                                 id="basic-menu"
@@ -276,9 +286,18 @@ export default function ManageDataset({
                             {datasetMode === 0 ?<Button variant="outlined" size="medium" sx={{borderRadius:3, color:'#000', borderColor:'#939EAA', marginLeft:'1rem'}}
                                                         startIcon={<EditIcon />} onClick={() => setDatasetMode(1)}>
                                 {"Edit"}</Button>: datasetMode === 1 ?
+                                <><Button variant="outlined" size="medium" sx={{borderRadius:3, color:'#000', borderColor:'#939EAA', marginLeft:'1rem'}}
+                                        startIcon={dataSourceData.status !== "Active" ?<CheckIcon /> : <DraftsIcon />} onClick={() => {
+                                            if(dataSourceData.status === "Active" ){
+                                                setArchive(userdataset)
+                                            } else if(dataSourceData.status === "Archive" ){
+                                                setActive(userdataset)
+                                            }
+                                        }}>
+                                    {dataSourceData.status === "Active" ? "Save as Draft" : "Set Active"}</Button>
                                 <Button variant="outlined" size="medium" sx={{borderRadius:3, color:'#000', borderColor:'#939EAA', marginLeft:'1rem'}}
                                         startIcon={<CheckIcon />} onClick={() => {updateF(userdataset)}}>
-                                    {"Update"}</Button>:null}
+                                    {"Update"}</Button></>:null}
                         </Box>
 
                     </Box>
@@ -287,7 +306,7 @@ export default function ManageDataset({
                         <Box sx={{ display: 'flex', flexDirection:'row', font:'roboto', fontSize:24,height:'100%',
                             color:'gray-900',justifyContent:'space-around'}}>
                             <div>Data Catalog Overview: &nbsp;</div>{dataSources !== null && dataSources !== undefined &&
-                                <div>{dataSource.title}</div>}
+                                <div>{dataSourceData.title}</div>}
                         </Box>
 
                     </Box>
@@ -310,14 +329,6 @@ export default function ManageDataset({
 
                     </div>
                 </div>
-
-                <Modal open={openDetails} onClose={handleCloseDetails}>
-                    <Box sx={style2}>
-                        <DataSourcesDetails handleCloseDetails={handleCloseDetails} datasetMode={datasetMode}
-                                            data={dsDetails} addDatasetcatalog={addDatasetcatalog}
-                                            removeDatasetcatalog={removeDatasetcatalog}/>
-                    </Box>
-                </Modal>
 
                 {/* <div style={{ display: 'flex', minHeight: '23vh', backgroundColor:'#FAFAFB',pt:4, width:'100%'}}>
 

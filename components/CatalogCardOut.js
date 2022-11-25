@@ -8,6 +8,7 @@ import { useRouter } from 'next/router';
 import TextField from '@mui/material/TextField';
 import FormControl from '@mui/material/FormControl';
 import Tooltip2 from '@mui/material/Tooltip';
+import ArticleIcon from '@mui/icons-material/Article';
 
 
 export default function CatalogCardOut({token, data, datasetMode, setDatasetMode,localTitle,setLocalTitle,localDescription,
@@ -29,7 +30,7 @@ export default function CatalogCardOut({token, data, datasetMode, setDatasetMode
 
     useEffect(() => {
         setLocalDataset({...userdatasets, title:localTitle, description:localDescription,topic:localTopic,
-        source_description:localSource, source_url:localSourceURL});
+        source_description:localSource, source_url:localSourceURL, });
     }, [localTitle, localDescription, localTopic, localSource, localSourceURL]);
 
     useEffect(() => {console.log("DATATATA",data)})
@@ -89,6 +90,9 @@ export default function CatalogCardOut({token, data, datasetMode, setDatasetMode
                       </div> */}
                       <div><b>{"Source: "}</b>{data.source_description?data.source_description:""}</div>
                     <div><b>{"Source URL: "}</b>{data.source_url?data.source_url:""} </div>
+                    <ArticleIcon onClick={() => window.open(data.dataset_upload_file_path)}
+                        style={{cursor:"pointer", fontSize:'4rem'}}/> 
+                        <div>{data.dataset_uploaded_file_name?data.dataset_uploaded_file_name:""} </div>
 
               </div>
               : null}
@@ -126,9 +130,11 @@ export default function CatalogCardOut({token, data, datasetMode, setDatasetMode
                 
                 <TextField value={localSourceURL} size="small" multiline maxRows={4}
                     onChange={(e)=>{setLocalSourceURL(e.target.value)}}
-                    label="Sorce URL" variant="outlined" sx={{minWidth:"100%",paddingBottom:'1rem'}}/>
+                    label="Source URL" variant="outlined" sx={{minWidth:"100%",paddingBottom:'1rem'}}/>
+
 
                 </FormControl>
+                
 
                 </div>
             </div>

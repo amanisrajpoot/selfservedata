@@ -22,7 +22,7 @@ import Grid from '@mui/material/Grid';
 import ScreenLockPortraitOutlinedIcon from '@mui/icons-material/ScreenLockPortraitOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useState } from 'react';
+import { useState, CSSProperties } from 'react';
 import { useRouter } from 'next/router';
 import { withStyles } from '@material-ui/core/styles';
 import {confirmSignUp, signIn, signUp, recieveOTP} from "../function/checkAuth";
@@ -41,6 +41,7 @@ import RootRef from '@material-ui/core/RootRef'
 import validator from 'validator'
 //import validator from 'validator-js';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import PropagateLoader from "react-spinners/PropagateLoader";
 
 // installed using npm install buffer --save
 //window.Buffer = window.Buffer || require("buffer").Buffer;
@@ -63,6 +64,12 @@ function Copyright(props) {
     </Typography>
   );
 }
+
+const override = {...CSSProperties,
+    display: "block",
+    margin: "0 auto",
+    borderColor: "red",
+  };
 
 const SubmitFile =({token, setToken, name, setName, email, setEmail, company, setCompany,user, setuser,}) => {
 
@@ -146,6 +153,8 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
     const [selectedFile, setSelectedFile] = useState(null);
     const [fileUploadWait, setFileUploadWait] = useState(true);
     const [fileFormat, setFileFormat] = React.useState('');
+    const [loading, setLoading] = useState(false);
+    const [color, setColor] = useState("#ffffff");
     const [fileFormatOptions, setFileFormatOptions] = useState(['.CSV','.DOC','.DOCX','.ODT','.XLS','.XLSX','.ODS','.TXT',])
 
     const handleFileFormatChange = (event) => {
@@ -165,6 +174,7 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
         console.log("acccepted file",acceptedFiles[0].name)
         setSelectedFile(acceptedFiles[0])
         setError("Uploading File")
+        setLoading(true)
         //the name of the file uploaded is used to upload it to S3
         ReactS3Client
         .uploadFile(acceptedFiles[0], acceptedFiles[0].name)
@@ -175,6 +185,7 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
             setError("You can now submit the datasource")
             console.log(dataSourceS3FileURL)
             setError(null)
+            setLoading(false)
         })
         .catch(err => console.error(err))
 
@@ -184,6 +195,7 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
         const ReactS3Client = new S3(config);
         console.log("acccepted file",acceptedFiles[0].name)
         setError("Uploading File")
+        setLoading(true)
         sleep(2000)
         setError(null)
         //the name of the file uploaded is used to upload it to S3
@@ -202,13 +214,14 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
       }, [])
 
     const {getRootProps, getInputProps, isDragActive, open, acceptedFiles} = useDropzone({maxFiles:1, accept: {
-        'text/*': ['.DOC','.DOCX','.CSV','.ODT','.XLS','.XLSX','.ODS','.TXT',]
+        'text/*': ['.DOC','.DOCX','.CSV','.ODT','.XLS','.XLSX','.ODS','.TXT','.ZIP']
       }, })
     const file = acceptedFiles.map(file => (
         
         <div key={file.path} style={{paddingBottom:'1.5rem'}}>
           {file.path} - {(file.size)/1024} KB
-            <div style={{display:'flex', justifyContent:'space-between',}}><Button type="submit" variant="contained"
+            <div style={{display:'flex', justifyContent:'space-between',}}>
+                <Button type="submit" variant="contained"
                 sx={{ mt: 3, mb: 2, borderRadius: 2, py: 2,
                     width: "40%",backgroundColor: "#5A00E2"}}
                     onClick={handleFileInput}>Upload File</Button>
@@ -251,7 +264,56 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
                     "data_points": 0,
                     "features": "",
                     "data_sources": 0,
-                    "status": "",
+                    "status": "Active",
+                    "range": "",
+                    "template": 0,
+                    "ss_user_id": user.ID,
+                    "dataset_file_name": "",
+                    "dataset_file_desc": "",
+                    "dataset_is_processed": 0,
+                    "dataset_process_error": "",
+                    "further_analysis_required": 0,
+                    "source_dataset_url": "",
+                    "time_horizon": "",
+                    "source_subscription_type": "",
+
+                }
+            });
+            if (erro.responseData.resultValue === 1) {
+                //setError(erro);
+                await router.push('/browsecatalogue')
+                // setMode(1)
+                
+            } else {
+                //setError(erro);
+                console.log('server error', erro)
+                setMode(0);
+            }
+        }
+    }
+
+    async function submitDatasourceDraft() {
+        if(fileUploadWait === true){
+            alert("File is still getting uploaded, please wait before submitting.")
+        } else {
+            console.log("uploading datasource to the database")
+            const erro = await saveDataSourceInfo({
+                "requestParameter": {
+                    "title":dataSourceName,
+                    "description":dataSourceDescription,
+                    "topic":dataSourceTopic,
+                    "source_description":dataSourceFileSource,
+                    "source_url":dataSourceFileLink,
+                    "dataset_uploaded_file_name":selectedFile.name,
+                    "dataset_upload_file_path":dataSourceS3FileURL,
+                    "source_data_format":dataSourceFileFormat,
+                    "user_email": user.email,
+                    "refresh_rate": "",
+                    "row_count": 0,
+                    "data_points": 0,
+                    "features": "",
+                    "data_sources": 0,
+                    "status": "draft",
                     "range": "",
                     "template": 0,
                     "ss_user_id": user.ID,
@@ -671,26 +733,43 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
                                            : 
                                            <div  style={{border:'0.5px solid #bfbfbf', minWidth:'100%', display:'flex', borderRadius:'0.3rem',
                                                 justifyContent:'center', marginBottom:'1.5rem', marginTop:'1rem'}}>
-                                                <section>
-                                                <div  {...getRootProps({className: 'dropzone'})}>
-                                                    <input {...getInputProps()} />
-                                                    {file.length <= 0 ? <div style={{paddingBottom:'0.25rem'}}><p>Drag 'n' drop some files here, or click to select files</p> 
-                                                                        <em style={{display: "block"}}>(You can drop only one file here)</em>
-                                                                        <Button sx={{ mt: 3, mb: 2, borderRadius: 2, py: 2,
-                                                                            width: "40%",backgroundColor: "#5A00E2", color:'#fff'}}
+                                                {loading ? <div style={{display:'flex',flexDirection:'column',paddingBottom:'0.25rem', minWidth:'100%', maxWidth:'100%', 
+                                                                        paddingTop:'1rem', justifyContent:'center', alignItems:'center'}}>
+                                                            <p style={{paddingBottom:'0.50rem', marginRight:'1.25rem',marginTop:'2rem',
+                                                                        }}><PropagateLoader color="#36d7b7" /></p>
+
+                                                                <em style={{display: "block"}}>(Uploading File...)</em>
+                                                                        
+                                                                        {/* <Button sx={{  mb: 2, borderRadius: 2, py: 2,px:4, minWidth:'50%', maxWidth:'50%', 
+                                                                            backgroundColor: "#5A00E2", color:'#fff'}}
                                                                             type="button"
-                                                                            variant="contained" onClick={open}>
-                                                                            Select File
-                                                                            </Button></div>
-                                                                        : <p>Selected File</p>
-                                                                        }
-                                                    
-                                                </div>
-                                                <aside>
-                                                    {/*<h4>File</h4>*/}
-                                                    <div>{file}</div>
-                                                </aside>
-                                            </section>
+                                                                            variant="contained" onClick={()=>setLoading(false)}>
+                                                                            Cancel
+                                                                            </Button> */}
+                                                                            </div>:
+                                                
+                                                <section>
+                                                    <div  {...getRootProps({className: 'dropzone'})}>
+                                                        <input {...getInputProps()} />
+                                                        {file.length <= 0 ? <div style={{paddingBottom:'0.25rem'}}><p>Drag 'n' drop some files here, or click to select files</p> 
+                                                                            <em style={{display: "block"}}>(You can drop only one file here)</em>
+                                                                            <Button sx={{ mt: 3, mb: 2, borderRadius: 2, py: 2,
+                                                                                width: "40%",backgroundColor: "#5A00E2", color:'#fff'}}
+                                                                                type="button"
+                                                                                variant="contained" onClick={open}>
+                                                                                Select File
+                                                                                </Button></div>
+                                                                            : <p>Selected File</p>
+                                                                            
+                                                                            }
+
+                                                    </div>
+                                                    <aside>
+                                                        {/*<h4>File</h4>*/}
+                                                        <div>{file}</div>
+                                                    </aside>
+                                                </section>
+                                            }
                                             </div>
                                             }
                                             

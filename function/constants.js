@@ -2,7 +2,6 @@ export const PAGE_SIZE = 12;
 export const CONTACT_EMAIL = '';
 export const adminRoute = ['/admin/hil', '/admin/drugs'];
 export const nonAuthRoutes = [
-	'/',
 	'/login',
 	'/signup',
 	'/signup1',

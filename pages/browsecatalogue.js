@@ -35,6 +35,8 @@ import TextField from '@mui/material/TextField';
 import Pagination from 'react-bootstrap/Pagination'
 import axios from 'axios'
 import ReactPaginate from "react-paginate";
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 
 
 mixpanel.init('d4ba2a4d19d51d9d4f19903db6a1a396', {debug: true,ignore_dnt: true}); 
@@ -153,6 +155,25 @@ export default function BrowseCatalogue({
     useEffect(async () => {
         if(token !== 0 && token && token !== null && token !== undefined && 
             user !== {} && user !== null && user !== undefined){
+                console.log('get users called from catalog page', token);
+            const userP = await getUser(token);
+            if(userP === null){
+                setuser({});
+            }else{
+                setuser(userP)
+                setData({
+                    "requestParameter": {
+                      "value": parseInt(user.ID)
+                    }
+                  })
+            }
+            console.log('userP', userP);
+        }
+    }, []);
+
+    useEffect(async () => {
+        if(token !== 0 && token && token !== null && token !== undefined && 
+            user !== {} && user !== null && user !== undefined){
                 setData({
                     "requestParameter": {
                       "value": parseInt(user.ID)
@@ -223,14 +244,14 @@ export default function BrowseCatalogue({
   const [users, setUsers] = useState(searchMode === 0 && dataSources && dataSources.slice(0, 50));
 
   useEffect(()=>{
-        if(searchMode === 0 && dataSources){
-            setUsers(dataSources.slice(0, 50))
-        }else if(searchMode === 1 && keywordFilteredDataSources){
-            setUsers(keywordFilteredDataSources.slice(0, 50))
-        } else if(searchMode === 2  && topicFilteredDataSources){
-            setUsers(topicFilteredDataSources.slice(0, 50))
-        }
-    },[router, searchMode, token])
+    if(searchMode === 0){
+        setUsers(dataSources && dataSources.slice(0, 50));
+    }else if(searchMode === 1){
+        setUsers(keywordFilteredDataSources && keywordFilteredDataSources.slice(0, 50));
+    }else if(searchMode === 2){
+        setUsers(topicFilteredDataSources && topicFilteredDataSources.slice(0, 50));
+    }
+    },[searchMode, dataSources, keywordFilteredDataSources, topicFilteredDataSources])
 
   const [pageNumber, setPageNumber] = useState(0);
 
@@ -239,7 +260,8 @@ export default function BrowseCatalogue({
 
   const displayUsers = users !==null && users && users
     .slice(pagesVisited, pagesVisited + usersPerPage)
-    .sort((a,b)=>new Date(b.CreatedAt) - new Date(a.CreatedAt)).map((data,index)=> <div style={{width:'100%', paddingLeft:'0.7rem',
+    .sort((a,b)=>new Date(b.CreatedAt) - new Date(a.CreatedAt)).map((data,index)=>
+                <div style={{width:'100%', paddingLeft:'0.7rem',
                     paddingRight:'0.7rem'}}>
                         <FeatureCard
                         openDetails={openDetails}
@@ -260,21 +282,60 @@ export default function BrowseCatalogue({
                     </div>
       );
 
-    useEffect(()=>{
-        if(searchMode === 0){
-            setUsers(dataSources && dataSources.slice(0, 50));
-        }else if(searchMode === 1){
-            setUsers(keywordFilteredDataSources && keywordFilteredDataSources.slice(0, 50));
-        }else if(searchMode === 2){
-            setUsers(topicFilteredDataSources && topicFilteredDataSources.slice(0, 50));
-        }
-    },[searchMode, dataSources, keywordFilteredDataSources, topicFilteredDataSources])
-
   const pageCount = users !== null && users && Math.ceil(users.length / usersPerPage);
 
   const changePage = ({ selected }) => {
     setPageNumber(selected);
   };
+
+  const [usersDraft, setUsersDraft] = useState(searchMode === 0 && dataSources && dataSources.slice(0, 50));
+
+  useEffect(()=>{
+    if(searchMode === 0){
+        setUsersDraft(dataSources && dataSources.slice(0, 50).filter((draft)=>draft.status === 'Archive'));
+        }else if(searchMode === 1){
+            setUsersDraft(keywordFilteredDataSources && keywordFilteredDataSources.slice(0, 50).filter((draft)=>draft.status === 'Archive'));
+        }else if(searchMode === 2){
+            setUsersDraft(topicFilteredDataSources && topicFilteredDataSources.slice(0, 50).filter((draft)=>draft.status === 'Archive'));
+        }
+    },[searchMode, dataSources, keywordFilteredDataSources, topicFilteredDataSources])
+    
+  const [pageNumberDraft, setPageNumberDraft] = useState(0);
+
+  const usersPerPageDraft = 5;
+  const pagesVisitedDraft = pageNumberDraft * usersPerPageDraft;
+
+  const displayUsersDraft = usersDraft !==null && usersDraft && usersDraft
+    .slice(pagesVisitedDraft, pagesVisitedDraft + usersPerPageDraft)
+    .sort((a,b)=>new Date(b.CreatedAt) - new Date(a.CreatedAt)).map((data,index)=> 
+                    <div style={{width:'100%', paddingLeft:'0.7rem',
+                    paddingRight:'0.7rem'}}>
+                        <FeatureCard
+                        openDetails={openDetails}
+                        data={data}
+                        index={index}
+                        token={token}
+                        user={user}
+                        key={data.id}
+                        pagesVisited={pagesVisitedDraft}
+                        usersPerPage={usersPerPageDraft}
+                        handleOpenDetails={handleOpenDetails}
+                        handleCloseDetails={handleCloseDetails}
+                        dataset={dataset.catalog}
+                        dataSources={dataSources}
+                        removeDatasetcatalog={removeDatasetcatalog}
+                        addDatasetcatalog={addDatasetcatalog}
+                    />
+                    </div>
+      );
+
+  const pageCountDraft = usersDraft !== null && usersDraft && Math.ceil(usersDraft.length / usersPerPageDraft);
+
+  const changePageDraft = ({ selected }) => {
+    setPageNumberDraft(selected);
+  };
+
+  const [draftVisibility, setDraftVisibility] = useState(true)
 
   return (
     
@@ -298,8 +359,8 @@ export default function BrowseCatalogue({
                       <div>Added Data Catalogs &nbsp;</div>
                   {/* {searchMode === 0 && dataSources !== null && dataSources !== undefined ?
                   <div>{"("+ dataSources.length+")"}</div>: */}
-                      {searchMode === 0 && dataSources !== null && dataSources !== undefined ?
-                      <div>{"("+ dataSources.length+")"}</div>:
+                      {users !== null && searchMode === 0 && dataSources !== null && dataSources !== undefined ?
+                      <div>{"("+ users !== null && users.length+")"}</div>:
                       searchMode === 1 && keywordFilteredDataSources !== null && keywordFilteredDataSources !== undefined ?
                       <div>{"("+ keywordFilteredDataSources.length+")"}</div>:
                       searchMode === 2 && topicFilteredDataSources !== null && topicFilteredDataSources !== undefined ?
@@ -491,87 +552,65 @@ export default function BrowseCatalogue({
                         </div>}
           
           </LoadingOverlay>
-          
 
-          {/* <Box sx={{ display: 'flex', flexDirection:'row', py: 3, bgcolor: 'gray-900', width:'100%',
-              justifyContent:'space-between'}}>
+          <div style={{ display: 'flex', flexDirection:'row', bgcolor: 'gray-900', minWidth:'100%', maxWidth:'100%',
+              justifyContent:'space-between',paddingBottom:"1.5em", paddingTop:"1.5em",}}>
 
-              <Box sx={{ display: 'flex', flexDirection:'row', font:'roboto', fontSize:18,
-                    color:'gray-700',justifyContent:'space-around', alignItems:'center'}}>
+              <div style={{ display: 'flex', flexDirection:'row', font:'roboto', fontSize:18,
+                    color:'gray-700',justifyContent:'space-around', alignItems:'center', }}>
                     <div><TableViewOutlinedIcon fontSize="large"/>&nbsp;&nbsp;</div>
-                      <div>Newly Added Data Catalogs &nbsp;</div>
-                      {/* { dataSources !== null && dataSources !== undefined &&
-                        <div>{"("+ 4 +")"}</div> } 
+                      <div>Draft Data Catalogs &nbsp;</div>
+                  {/* {searchMode === 0 && dataSources !== null && dataSources !== undefined ?
+                  <div>{"("+ dataSources.length+")"}</div>: */}
+                      {usersDraft !== null && searchMode === 0 && dataSources !== null && dataSources !== undefined ?
+                      <div>{"("+ usersDraft !== null  && usersDraft.length+")"}</div>:
+                      searchMode === 1 && keywordFilteredDataSources !== null && keywordFilteredDataSources !== undefined ?
+                      <div>{"("+ keywordFilteredDataSources.length+")"}</div>:
+                      searchMode === 2 && topicFilteredDataSources !== null && topicFilteredDataSources !== undefined ?
+                      <div>{"("+ topicFilteredDataSources.length+")"}</div>:null}
                     <div style={{color:'gray'}}><Divider variant="middle" flexItem/></div>
+                    <div style={{marginLeft:-32, paddingTop:'0.5rem'}}>
+                        {draftVisibility === false ? <ArrowDropUpIcon onClick={()=>setDraftVisibility(!draftVisibility)}/> :
+                            <ArrowDropDownIcon onClick={()=>setDraftVisibility(!draftVisibility)} />}</div>
+                </div>
 
-                </Box>
-              <div style={{color:'gray'}}><Divider variant="middle" flexItem/></div>
-                {/* <SettingsIcon fontSize="large" sx={{cursor:'pointer', color:"gray"}}
-                    onClick={()=>router.push("/settings")}/> 
-
-          </Box>
-
-          <Box sx={{  display:'flex', flexDirection:'column', borderRadius:3,  pt:1,
-              justifyContent:"center",alignItems:'center', flexWrap:'wrap',border:'0.5px solid #bfbfbf',}}>
-
-                {searchMode === 0 ?
-                    dataSources !== null && dataSources !== undefined &&
-                    dataSources.sort((a,b)=>new Date(b.CreatedAt) - new Date(a.CreatedAt)).map((data,index)=> index < 5 && <FeatureCard
-                        openDetails={openDetails}
-                        data={data}
-                        index={index}
-                        token={token}
-                        user={user}
-                        handleOpenDetails={handleOpenDetails}
-                        handleCloseDetails={handleCloseDetails}
-                        dataset={dataset.catalog}
-                        dataSources={dataSources}
-                        removeDatasetcatalog={removeDatasetcatalog}
-                        addDatasetcatalog={addDatasetcatalog}
-                    />):
                 
-                    searchMode === 1?
-                    keywordFilteredDataSources !== null && keywordFilteredDataSources !== undefined && 
-                    keywordFilteredDataSources.sort((a,b)=>new Date(b.CreatedAt) - new Date(a.CreatedAt)).map((data,index)=> index < 5 && <FeatureCard
-                        openDetails={openDetails}
-                        data={data}
-                        index={index}
-                        token={token}
-                        user={user}
-                        handleOpenDetails={handleOpenDetails}
-                        handleCloseDetails={handleCloseDetails}
-                        dataset={dataset.catalog}
-                        dataSources={dataSources}
-                        removeDatasetcatalog={removeDatasetcatalog}
-                        addDatasetcatalog={addDatasetcatalog}
-                    />):
-                    
-                    searchMode === 2  ? 
-                    topicFilteredDataSources !== null && topicFilteredDataSources !== undefined &&
-                    topicFilteredDataSources.sort((a,b)=>new Date(b.CreatedAt) - new Date(a.CreatedAt)).map((data,index)=> index < 5 && <FeatureCard
-                        openDetails={openDetails}
-                        data={data}
-                        index={index}
-                        token={token}
-                        user={user}
-                        handleOpenDetails={handleOpenDetails}
-                        handleCloseDetails={handleCloseDetails}
-                        dataset={dataset.catalog}
-                        dataSources={dataSources}
-                        removeDatasetcatalog={removeDatasetcatalog}
-                        addDatasetcatalog={addDatasetcatalog}
-                    />):null}
-          </Box>
-      
-      <Modal open={openDetails} onClose={handleCloseDetails}>
-          <Box sx={style2}>            
-              <DataSourcesDetails user={user} handleCloseDetails={handleCloseDetails}
-              data={dsDetails}/>
-          </Box>                  
-       </Modal> */}
 
-       {/*<Footer />*/}
+          </div>
 
+          {!draftVisibility && <LoadingOverlay
+                active={isActive}
+                spinner={<SyncLoader />}
+                // text='Loading your content...'
+                > 
+            <div style={{ display:'flex', flexDirection:'column', borderRadius:'0.75em', minWidth:'100%',maxWidth:'100%',
+                            justifyContent:"center",alignItems:'center', border:'0.5px solid #bfbfbf',}}>
+
+                    <div style={{display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center',
+                        minWidth:'100%',maxWidth:'100%', height:'100%', 
+                        paddingTop:8,  backgroundColor: '#FAFAFB'}}>
+                            { displayUsersDraft}
+                            </div>    
+                </div>
+                    { users && users.length > 5 && <div style={{ display:'flex', flexDirection:'column', 
+                        borderRadius:'0.75em', paddingTop:'1em', justifyContent:"center",
+                        alignItems:'center', flexWrap:'wrap',}}>
+                            <ReactPaginate
+                                        previousLabel={"Previous"}
+                                        nextLabel={"Next"}
+                                        pageCount={pageCountDraft}
+                                        onPageChange={changePageDraft}
+                                        containerClassName={"paginationBttns"}
+                                        previousLinkClassName={"previousBttn"}
+                                        nextLinkClassName={"nextBttn"}
+                                        disabledClassName={"paginationDisabled"}
+                                        activeClassName={"paginationActive"}
+                                    />
+                        {/* </Paper> */}
+                        </div>}
+          
+          </LoadingOverlay>}
+          
     </div>
   );
 }
