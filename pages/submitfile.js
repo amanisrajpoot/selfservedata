@@ -218,18 +218,20 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
       }, })
     const file = acceptedFiles.map(file => (
         
-        <div key={file.path} style={{paddingBottom:'1.5rem'}}>
+        <div key={file.path} style={{paddingBottom:'1.5rem', minWidth:"100%"}}>
           {file.path} - {(file.size)/1024} KB
-            <div style={{display:'flex', justifyContent:'space-between',}}>
-                <Button type="submit" variant="contained"
-                sx={{ mt: 3, mb: 2, borderRadius: 2, py: 2,
+            <div style={{display:'flex', justifyContent:'space-between',minWidth:"100%"}}>
+                {fileUploadWait && <Button type="submit" variant="contained"
+                sx={{ mt: 3, mb: 2, borderRadius: 2, py: 2,px:8,
                     width: "40%",backgroundColor: "#5A00E2"}}
-                    onClick={handleFileInput}>Upload File</Button>
+                    onClick={handleFileInput}>Upload File</Button>}
 
                 <Button type="submit" variant="contained"
-                    sx={{ mt: 3, mb: 2, borderRadius: 2, py: 2,
+                    sx={{ mt: 3, mb: 2, borderRadius: 2, px:8,
                         width: "40%",backgroundColor: "#5A00E2"}}
-                        onClick={open}>Change File</Button>
+                        onClick={()=>{open();
+                        setFileUploadWait(true);
+                        }}>Change File</Button>
             </div>
         </div>
 
@@ -650,7 +652,7 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
                                                 label="Datasource URL"
                                                 name="fileSource"
                                                 autoComplete="File Source"
-                                                helperText="Incorrect Datasource File Source"
+                                                helperText="Incorrect Datasource Provider/Origin"
                                                 autoFocus
                                                 onChange={(e) => setDataSourceFileSource(e.target.value)}
                                                 InputProps={{
@@ -659,14 +661,14 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
                                                             <BusinessIcon/>
                                                         </InputAdornment>
                                                     ),
-                                                    placeholder: "Datasource File Source"
+                                                    placeholder: "Datasource Provider/Origin"
                                                 }}
                                             /> : <TextField
                                                 margin="normal"
                                                 required
                                                 sx={{width: "100%"}}
                                                 id="fileSource"
-                                                label="Datasource File Source"
+                                                label="Datasource Provider/Origin"
                                                 name="fileSource"
                                                 autoComplete="File Source"
                                                 autoFocus
@@ -677,7 +679,7 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
                                                             <BusinessIcon/>
                                                         </InputAdornment>
                                                     ),
-                                                    placeholder: "Datasource File Source"
+                                                    placeholder: "Datasource Provider/Origin"
                                                 }}
                                             />}
 
@@ -749,9 +751,9 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
                                                                             </div>:
                                                 
                                                 <section>
-                                                    <div  {...getRootProps({className: 'dropzone'})}>
+                                                    <div  style={{minWidth:"100%"}}{...getRootProps({className: 'dropzone'})}>
                                                         <input {...getInputProps()} />
-                                                        {file.length <= 0 ? <div style={{paddingBottom:'0.25rem'}}><p>Drag 'n' drop some files here, or click to select files</p> 
+                                                        {file.length <= 0 ? <div style={{paddingBottom:'0.25rem', minWidth:"100%"}}><p>Drag 'n' drop some files here, or click to select files</p> 
                                                                             <em style={{display: "block"}}>(You can drop only one file here)</em>
                                                                             <Button sx={{ mt: 3, mb: 2, borderRadius: 2, py: 2,
                                                                                 width: "40%",backgroundColor: "#5A00E2", color:'#fff'}}
