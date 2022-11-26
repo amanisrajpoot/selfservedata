@@ -90,10 +90,10 @@ export default function CatalogCardOut({token, data, datasetMode, setDatasetMode
                       </div> */}
                       <div><b>{"Source: "}</b>{data.source_description?data.source_description:""}</div>
                     <div><b>{"Source URL: "}</b>{data.source_url?data.source_url:""} </div>
-                    <ArticleIcon onClick={() => window.open(data.dataset_upload_file_path)}
+                    <div><ArticleIcon onClick={() => window.open(data.dataset_upload_file_path, "_self")}
                         style={{cursor:"pointer", fontSize:'4rem'}}/> 
                         <div>{data.dataset_uploaded_file_name?data.dataset_uploaded_file_name:""} </div>
-
+                        </div>
               </div>
               : null}
 

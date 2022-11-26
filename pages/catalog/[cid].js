@@ -162,7 +162,7 @@ export default function ManageDataset({
     async function setActive(dataF){
         const update = {
                 "Id": dataF.id,
-                "Status": "Archive"
+                "Status": "Active"
         }
         console.log("updated dataset data", localDataset)
         const data = await updateSourceStatus({token, requestParameter:update});
@@ -174,7 +174,7 @@ export default function ManageDataset({
     async function setArchive(dataF){
         const update = {
                 "Id": dataF.id,
-                "Status": "Active"
+                "Status": "Archive"
         }
         console.log("updated dataset data", localDataset)
         const data = await updateSourceStatus({token, requestParameter:update});

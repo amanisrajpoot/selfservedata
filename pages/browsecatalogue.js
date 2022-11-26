@@ -245,11 +245,11 @@ export default function BrowseCatalogue({
 
   useEffect(()=>{
     if(searchMode === 0){
-        setUsers(dataSources && dataSources.slice(0, 50));
+        setUsers(dataSources && dataSources.slice(0, 50).filter((draft)=>draft.status === 'Active'));
     }else if(searchMode === 1){
-        setUsers(keywordFilteredDataSources && keywordFilteredDataSources.slice(0, 50));
+        setUsers(keywordFilteredDataSources && keywordFilteredDataSources.slice(0, 50).filter((draft)=>draft.status === 'Active'));
     }else if(searchMode === 2){
-        setUsers(topicFilteredDataSources && topicFilteredDataSources.slice(0, 50));
+        setUsers(topicFilteredDataSources && topicFilteredDataSources.slice(0, 50).filter((draft)=>draft.status === 'Active'));
     }
     },[searchMode, dataSources, keywordFilteredDataSources, topicFilteredDataSources])
 
@@ -360,7 +360,7 @@ export default function BrowseCatalogue({
                   {/* {searchMode === 0 && dataSources !== null && dataSources !== undefined ?
                   <div>{"("+ dataSources.length+")"}</div>: */}
                       {users !== null && searchMode === 0 && dataSources !== null && dataSources !== undefined ?
-                      <div>{"("+ users !== null && users.length+")"}</div>:
+                      <div>{"("}{users !== null && users.length+")"}</div>:
                       searchMode === 1 && keywordFilteredDataSources !== null && keywordFilteredDataSources !== undefined ?
                       <div>{"("+ keywordFilteredDataSources.length+")"}</div>:
                       searchMode === 2 && topicFilteredDataSources !== null && topicFilteredDataSources !== undefined ?
@@ -563,7 +563,7 @@ export default function BrowseCatalogue({
                   {/* {searchMode === 0 && dataSources !== null && dataSources !== undefined ?
                   <div>{"("+ dataSources.length+")"}</div>: */}
                       {usersDraft !== null && searchMode === 0 && dataSources !== null && dataSources !== undefined ?
-                      <div>{"("+ usersDraft !== null  && usersDraft.length+")"}</div>:
+                      <div>{"("}{usersDraft !== null  && usersDraft.length+")"}</div>:
                       searchMode === 1 && keywordFilteredDataSources !== null && keywordFilteredDataSources !== undefined ?
                       <div>{"("+ keywordFilteredDataSources.length+")"}</div>:
                       searchMode === 2 && topicFilteredDataSources !== null && topicFilteredDataSources !== undefined ?
