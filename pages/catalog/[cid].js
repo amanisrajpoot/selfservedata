@@ -85,7 +85,7 @@ export default function ManageDataset({
     const [currentRouteTitle, setCurrentRouteTitle] = useState("")
     const [dataSource, setDataSource] = useState({
         "requestParameter": {
-          "value": parseInt(datasource_id)
+          "value": parseInt(catalogID)
         }
       })
     const [dataSourceData, setDataSourceData] = useState({})
@@ -303,11 +303,11 @@ export default function ManageDataset({
                     </Box>
 
                     <Box sx={{ display: 'flex', flexDirection:'row', py: 2,px:2, justifyContent:'space-between', height:'100%'}}>
-                        <Box sx={{ display: 'flex', flexDirection:'row', font:'roboto', fontSize:24,height:'100%',
+                        {dataSourceData !== undefined && dataSourceData !== null && <Box sx={{ display: 'flex', flexDirection:'row', font:'roboto', fontSize:24,height:'100%',
                             color:'gray-900',justifyContent:'space-around'}}>
                             <div>Data Catalog Overview: &nbsp;</div>{dataSources !== null && dataSources !== undefined &&
                                 <div>{dataSourceData.title}</div>}
-                        </Box>
+                        </Box>}
 
                     </Box>
 
@@ -315,7 +315,7 @@ export default function ManageDataset({
                     <div style={{ }}>
                         <Box sx={{ display: 'flex', flexDirection:'row', py: 2,px:2, justifyContent:'space-between'}}>
                         {
-                            dataSource !== null && dataSource !== undefined && 
+                            dataSourceData !== null && dataSourceData !== undefined && dataSource !== null && dataSource !== undefined ?
                              <CatalogCardOut token={token} localDataset={localDataset}
                                               setLocalDataset={setLocalDataset} localTitle={localTitle} setLocalTitle={setLocalTitle}
                                               localDescription={localDescription}setLocalDescription={setLocalDescription} localTopic={localTopic}
@@ -324,6 +324,8 @@ export default function ManageDataset({
                                               deleteF={deleteF} updateF={updateF} currentTopic={currentTopic} setCurrentTopic={setCurrentTopic}
                                               localSource={localSource} setLocalSource={setLocalSource} localSourceURL={localSourceURL} setLocalSourceURL={setLocalSourceURL}
                             />
+                            :
+                            <div style={{paddingLeft:'6rem'}}><i>Seems like you've refreshed the page too many times, Please go back to Catalogs page.</i></div>
                         }
                         </Box>
 
