@@ -511,8 +511,8 @@ export default function BrowseCatalogue({
                     <div style={{display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center',
                         minWidth:'100%',maxWidth:'100%', height:'100%', 
                         paddingTop:8,  backgroundColor: '#FAFAFB'}}>
-                            {displayUsers ? <div>Either Catalogs are Loading or you haven't added any catalogs yet...</div>:
-                                displayUsers.length > 0 ? displayUsers:null}
+                            {displayUsers && displayUsers.length > 0 ? displayUsers:
+                                 <div>Either Catalogs are Loading or you haven't added any catalogs yet...</div>}
                             </div>    
                 </div>
                     {users && users.length > 5 && <div style={{ display:'flex', flexDirection:'column', 
@@ -570,8 +570,8 @@ export default function BrowseCatalogue({
                     <div style={{display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center',
                         minWidth:'100%',maxWidth:'100%', height:'100%', 
                         paddingTop:8,  backgroundColor: '#FAFAFB'}}>
-                            { displayUsersDraft ? <div>Either Catalogs are Loading or you haven't added any catalogs yet...</div>:
-                                displayUsersDraft.length > 0 ? displayUsersDraft:null}
+                            { displayUsersDraft && displayUsersDraft.length > 0 ? displayUsersDraft:
+                                <div>Either Catalogs are Loading or you haven't added any catalogs yet...</div>}
                             </div>    
                 </div>
                     { users && users.length > 5 && <div style={{ display:'flex', flexDirection:'column', 

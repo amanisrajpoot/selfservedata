@@ -23,7 +23,7 @@ const Forgot=({token, location, setToken})=>{
             if (err === null){
                 setError("Account confirmed. Login now to proceed.")
             }
-            setError(err)
+            setError("Account confirmed. Login now to proceed.")
         
     }
 
