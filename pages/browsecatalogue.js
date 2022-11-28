@@ -340,7 +340,7 @@ export default function BrowseCatalogue({
                   {/* {searchMode === 0 && dataSources !== null && dataSources !== undefined ?
                   <div>{"("+ dataSources.length+")"}</div>: */}
                       {users !== null && searchMode === 0 && dataSources !== null && dataSources !== undefined ?
-                      <div>{"("}{users !== null && users.length+")"}</div>:
+                      <div>{"("}{users !== null && users.length > 0 ? users.length :"Loading catalogs..."}{")"}</div>:
                       searchMode === 1 && keywordFilteredDataSources !== null && keywordFilteredDataSources !== undefined ?
                       <div>{"("+ keywordFilteredDataSources.length+")"}</div>:
                       searchMode === 2 && topicFilteredDataSources !== null && topicFilteredDataSources !== undefined ?
@@ -543,7 +543,7 @@ export default function BrowseCatalogue({
                   {/* {searchMode === 0 && dataSources !== null && dataSources !== undefined ?
                   <div>{"("+ dataSources.length+")"}</div>: */}
                       {usersDraft !== null && searchMode === 0 && dataSources !== null && dataSources !== undefined ?
-                      <div>{"("}{usersDraft !== null  && usersDraft.length+")"}</div>:
+                      <div>{"("}{usersDraft !== null && usersDraft.length>0 ? usersDraft.length : "Loading catalogs..."}{")"}</div>:
                       searchMode === 1 && keywordFilteredDataSources !== null && keywordFilteredDataSources !== undefined ?
                       <div>{"("+ keywordFilteredDataSources.length+")"}</div>:
                       searchMode === 2 && topicFilteredDataSources !== null && topicFilteredDataSources !== undefined ?
@@ -569,7 +569,7 @@ export default function BrowseCatalogue({
                     <div style={{display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center',
                         minWidth:'100%',maxWidth:'100%', height:'100%', 
                         paddingTop:8,  backgroundColor: '#FAFAFB'}}>
-                            { displayUsersDraft}
+                            { displayUsersDraft ? displayUsersDraft:<div>Loading catalogs...</div>}
                             </div>    
                 </div>
                     { users && users.length > 5 && <div style={{ display:'flex', flexDirection:'column', 

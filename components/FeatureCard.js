@@ -80,20 +80,21 @@ export default function FeatureCard(props){
                                     borderRadius:4, border:1, fontSize:"0.9em", mr:1, textTransform:'capitalize',letterSpacing:'0.1em',
                                     color:'#24BBFF'}}
                                     size="small"
-                                    onClick={()=>router.push({
-                                        pathname: `/topic/${topic}`,
-                                        query:{
-                                            currentRouteTitle:router.pathname.includes('/browsecatalogue')?"Browsing Catalogs":
-                                                router.pathname.includes('/topic')?"Topics":
-                                                router.pathname.includes('/datasets')?"Browsing Your Datasets":
-                                                router.pathname.includes('/catalog')?"Browsing Catalog":
-                                                router.pathname.includes('/searchresult')?"Search Results":
-                                                router.pathname.includes('/dashboard')?"Dashboard":
-                                                router.pathname.includes('/dataset')?props.data.title:
-                                                router.query.tid
-                                        }
-                                    })
-                                    }>{topic.substring(0,17) + ".."}</Button></Tooltip2>)
+                                    // onClick={()=>router.push({
+                                    //     pathname: `/topic/${topic}`,
+                                    //     query:{
+                                    //         currentRouteTitle:router.pathname.includes('/browsecatalogue')?"Browsing Catalogs":
+                                    //             router.pathname.includes('/topic')?"Topics":
+                                    //             router.pathname.includes('/datasets')?"Browsing Your Datasets":
+                                    //             router.pathname.includes('/catalog')?"Browsing Catalog":
+                                    //             router.pathname.includes('/searchresult')?"Search Results":
+                                    //             router.pathname.includes('/dashboard')?"Dashboard":
+                                    //             router.pathname.includes('/dataset')?props.data.title:
+                                    //             router.query.tid
+                                    //     }
+                                    // })
+                                    // }
+                                    >{topic.substring(0,17) + ".."}</Button></Tooltip2>)
                                 : "6"}</div>
                     </div>
 
