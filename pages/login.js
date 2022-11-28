@@ -124,7 +124,7 @@ const Login =({token, setToken}) => {
                 'signed in': true,
                 'email':user.email
             });
-            await router.push("/dashboard");
+            await router.push("/browsecatalogue");
         }
     }
 
