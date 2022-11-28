@@ -252,13 +252,6 @@ const SignUp =({token, setToken, name, setName, email, setEmail, company, setCom
             setPasswordError(false)
             setConfirmPasswordError(false)
             console.log("email issue",email.split("@")[1])
-        } else if (!filterEmail()) {
-            setError('Public Email Not Allowed');
-            setUsernameError(true)
-            setNameError(false)
-            setCompanyError(false)
-            setPasswordError(false)
-            setConfirmPasswordError(false)
         } else if (password.length < 8) {
             setError('Invalid password, must be atleast 8 letter long');
             setPasswordError(true)
