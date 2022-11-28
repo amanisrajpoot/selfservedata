@@ -186,15 +186,15 @@ const Login =({token, setToken}) => {
             {/*</Avatar>*/}
             <div style={{display:'flex',flexDirection:'column', alignItems:'start',width:'100%', }}>
                 <div style={{}}>
-                    <div style={{fontSize:30}}>Log In</div>
-                    <div style={{fontSize:14}}>Welcome back, you’ve been missed!</div>
+                    <div style={{fontSize:30}}>Self Service Platform</div>
+                    <div style={{fontSize:14}}>Let's get you started!</div>
                 </div>
             </div>
             <Box component="form" noValidate onSubmit={handleSubmit}
                  sx={{ pt: 1, display:'flex', flexDirection:'column', alignItems:'center',
                     minWidth:'100%'}}>
 
-                {usernameError ? <TextField
+                {/* {usernameError ? <TextField
                     error
                     margin="normal"
                     required
@@ -299,13 +299,13 @@ const Login =({token, setToken}) => {
                                 <a>Forgot password?</a>
                             </Link>
                         </div>
-                </div>
+                </div> */}
                 {/* {error && <div style={{color:"red"}}>{error}</div>} */}
               <Button
                 type="submit"
                 variant="contained"
                 sx={{ mt: 3, mb: 2, borderRadius:2,py:2,width:"100%",backgroundColor:"#5A00E2" }}
-                onClick={()=>checkFields()}
+                onClick={()=>router.push("/login")}
                 // href="/dashboard"
               >
                 Log In
