@@ -91,16 +91,6 @@ export default function ManageDataset({
     const [dataSourceData, setDataSourceData] = useState({})
 
     useEffect(()=>{
-        if((userdataset === null || userdataset === undefined) && userdataset !== null){
-            
-            setLocalStatus(userdataset.status)
-        }
-        
-    }
-    ,[router, userdataset, ])
-
-
-    useEffect(()=>{
             if((dataSource === null || dataSource === undefined) && datasource_id !== null){
                 setDataSource({
                 "requestParameter": {
@@ -191,27 +181,6 @@ export default function ManageDataset({
             console.log("fetched datasource data",dataSourced.responseData);
         }
     }, [token, datasource_id]);
-
-    useEffect(async () => {
-        if(token !== 0 && token && token !== null && token !== undefined &&
-            userdataset !== [] && userdataset !== null && userdataset !== undefined){
-            const data = await getDatasets(
-                token
-            );
-            setUserdatasets(data);
-            console.log("fetched datasets",data);
-        }
-    }, [token,router]);
-
-    const addLocalDatasetcatalog = (data) => {
-        setUserDataset({...userdataset,catalog:[...userdataset.catalog,data]});
-        console.log("catalog added",userdataset)
-    };
-    const removeLocalDatasetcatalog = (data) => {
-        const filtered = userdataset.catalog.filter(item => item.ID !== data.ID);
-        setUserDataset({...userdataset,catalog:filtered});
-        console.log("catalog removed",userdataset)
-    };
 
     useEffect(async () => {
         if(token !== 0 && token && token !== null && token !== undefined &&
