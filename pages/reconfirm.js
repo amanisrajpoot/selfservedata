@@ -17,13 +17,14 @@ const Forgot=({token, location, setToken})=>{
     }
 
     async function confirmOTPF(){
-        if(token !== 0 && token && token !== null && token !== undefined){
+        
+            console.log("confirm otp funtion reached",token)
             const err = await confirmSignUp({email, otp, token, setToken})
             if (err === null){
                 setError("Account confirmed. Login now to proceed.")
             }
             setError(err)
-        }
+        
     }
 
     return(
