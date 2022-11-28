@@ -214,7 +214,7 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
       }, [])
 
     const {getRootProps, getInputProps, isDragActive, open, acceptedFiles} = useDropzone({maxFiles:1, accept: {
-        'text/*': ['.DOC','.DOCX','.CSV','.ODT','.XLS','.XLSX','.ODS','.TXT','.ZIP']
+        'text/*': ['.CSV','.ODT','.XLS','.XLSX','.ODS','.ZIP']
       }, })
     const file = acceptedFiles.map(file => (
         
