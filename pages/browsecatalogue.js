@@ -78,8 +78,8 @@ export default function BrowseCatalogue({
   dataset,
   userdatasets,
   setUserdatasets,
-  //dataSources,
-  //setDataSources,
+  dataSources,
+  setDataSources,
   addDatasetcatalog,
   removeDatasetcatalog,
   user,
@@ -95,7 +95,7 @@ export default function BrowseCatalogue({
     const open2 = Boolean(anchorEl2);
     const openUser = Boolean(anchorElUser);
     const [isActive, setIsActive] = React.useState(false);
-    const [dataSources, setDataSources] = useState([]);
+    //const [dataSources, setDataSources] = useState([]);
     const [data, setData] = React.useState({
         "requestParameter": {
           "value": parseInt(user.ID)

@@ -5,7 +5,7 @@ import {useEffect, useState} from "react";
 import {nonAuthRoutes, adminUsers, adminRoute} from "../function/constants";
 import {useRouter} from "next/router";
 import {checkAuth} from "../function/checkAuth";
-import { getDatasets, getPublicDatasets, getUser } from '../function/users';
+import { getDatasets, getPublicDatasets, getUser, getDataSourceList } from '../function/users';
 import NextNProgress from 'nextjs-progressbar';
 import Layout from "../components/Layout";
 import "@fontsource/roboto";
@@ -127,13 +127,34 @@ function MyApp({ Component, pageProps }) {
           }, [title, description,token,router]);
 
     const [dataSources, setDataSources] = useState([]);
+
+    const [data, setData] = useState({
+        "requestParameter": {
+          "value": parseInt(user.ID)
+        }
+      })
+
+    useEffect(()=>{
+        setData({
+            "requestParameter": {
+              "value": parseInt(user.ID)
+            }
+          })
+    
+      },[router])
+
     useEffect(async () => {
-		if(token !== 0 && !token && token !== null && token !== undefined){
-            const data = await getDataSourceList(token, dataSourceData);
-			setDataSources(data);
-      console.log("fetched data",data);
-      }
-  }, [token, router]);
+        if(token !== 0 && token && token !== null && token !== undefined){
+                console.log('calling api with this data', token);
+            const dataSources = await getDataSourceList(token, data);
+            if(dataSources === null){
+                setDataSources({});
+            }else{
+                setDataSources(dataSources.responseData)
+            }
+            console.log('new api datasources', dataSources);
+        }
+    }, [token, router, ]);
 
   return (
       <Layout user={user} setuser={setuser} userdatasets={userdatasets} Auth={Auth} token={token} setToken={setToken} 
