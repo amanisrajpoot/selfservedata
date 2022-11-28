@@ -140,14 +140,16 @@ export default function TopNav({
 									/> 
 								</Link> */}
 								&nbsp;&nbsp;&nbsp;
-								<Link href={"/settings"}>
+								{/* <Link href={"/settings"}> */}
+									<div>
 									{/* <AccountCircleIcon onClick={()=>router.push("/settings")} 
 										fontSize="large" sx={{color:'#939EAA'}}/> */}
-									<Avatar alt={Auth.user?Auth.user.attributes.name.split(" ")[0].toUpperCase():'U'} sx={{height:35, width:35,cursor:'pointer' }} onClick={()=>router.push("/settings")}
+									<Avatar alt={Auth.user?Auth.user.attributes.name.split(" ")[0].toUpperCase():'U'} sx={{height:35, width:35,cursor:'pointer' }} 
 										src='url(/user_logo.jpg)' />
-								</Link>
+									</div>
+								{/* </Link> */}
 								&nbsp;&nbsp;&nbsp;
-								<p style={{fontSize:16, cursor:'pointer', paddingLeft:4,overflow:'auto' }} onClick={()=>router.push("/settings")}>
+								<p style={{fontSize:16, paddingLeft:4,overflow:'auto' }} >
 									{user && user.name?user.name.substring(0,9):Auth.user?Auth.user.attributes.name.split(" ")[0].substring(0,9): 'Account'} </p>
 								&nbsp;
 								<div
@@ -167,10 +169,10 @@ export default function TopNav({
 										'aria-labelledby': 'basic-button',
 									}}
 								>
-									<MenuItem onClick={()=>{
+									{/* <MenuItem onClick={()=>{
 										router.push('/settings')
 										handleCloseUser()
-										}}><SettingsIcon/>&nbsp; Settings</MenuItem>
+										}}><SettingsIcon/>&nbsp; Settings</MenuItem> */}
 									{/* <MenuItem onClick={()=>{
 										router.push('/support')
 										handleCloseUser()
