@@ -193,7 +193,7 @@ const SignUp =({token, setToken, name, setName, email, setEmail, company, setCom
                 console.log('token in the confirm signup function page 12', token)
                 //await router.push('/accountcreated');
                 router.push({
-                    pathname: `/dashboard/`,
+                    pathname: `/browsecatalogue/`,
                     query:{
                         currentRouteTitle:"signup",
                     }
@@ -424,7 +424,7 @@ const SignUp =({token, setToken, name, setName, email, setEmail, company, setCom
                                                 label="Company Name"
                                                 name="company"
                                                 autoComplete="company"
-                                                helperText="Incorrect Company Name"
+                                                helperText="Incorrect Company/College Name"
                                                 autoFocus
                                                 onChange={(e) => setCompany(e.target.value)}
                                                 InputProps={{
@@ -433,14 +433,14 @@ const SignUp =({token, setToken, name, setName, email, setEmail, company, setCom
                                                             <BusinessIcon/>
                                                         </InputAdornment>
                                                     ),
-                                                    placeholder: "Company Name"
+                                                    placeholder: "Company/College Name"
                                                 }}
                                             /> : <TextField
                                                 margin="normal"
                                                 required
                                                 sx={{width: "100%"}}
                                                 id="company"
-                                                label="Company Name"
+                                                label="Company/College Name"
                                                 name="company"
                                                 autoComplete="company"
                                                 autoFocus
@@ -451,7 +451,7 @@ const SignUp =({token, setToken, name, setName, email, setEmail, company, setCom
                                                             <BusinessIcon/>
                                                         </InputAdornment>
                                                     ),
-                                                    placeholder: "Company Name"
+                                                    placeholder: "Company/College Name"
                                                 }}
                                             />}
 

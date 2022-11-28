@@ -101,28 +101,8 @@ export default function BrowseCatalogue({
           "value": parseInt(user.ID)
         }
       })
-    
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleClick2 = (event) => {
-        setAnchorEl2(event.currentTarget);
-    };
 
   const [localdataset, setLocaldataset] = useState([]);
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleClose2 = () => {
-    setAnchorEl2(null);
-  };
-
-  const handleFilter = ((topic)=>{
-    handleTopicFilter(topic)
-  })
 
   useEffect(()=>{
     setData({
