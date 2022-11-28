@@ -155,7 +155,7 @@ const SubmitFile =({token, setToken, name, setName, email, setEmail, company, se
     const [fileFormat, setFileFormat] = React.useState('');
     const [loading, setLoading] = useState(false);
     const [color, setColor] = useState("#ffffff");
-    const [fileFormatOptions, setFileFormatOptions] = useState(['.CSV','.DOC','.DOCX','.ODT','.XLS','.XLSX','.ODS','.TXT',])
+    const [fileFormatOptions, setFileFormatOptions] = useState(['.CSV','.XLS','.XLSX','.ODT','.ODS',])
 
     const handleFileFormatChange = (event) => {
         setFileFormat(event.target.value);
