@@ -109,18 +109,6 @@ function MyApp({ Component, pageProps }) {
     }
   })
 
-    const [userdatasets, setUserdatasets] = useState([]);
-    useEffect(async () => {
-        if(token !== 0 && !token && token !== null && token !== undefined){
-            console.log('get datasets called from app', token);
-            const data = await getDatasets(
-                token
-            );
-            setUserdatasets(data);
-        console.log("fetched datasets",data);
-        }
-    }, [token, router]);
-
     useEffect( () => {
             setDataset({...dataset,title,description});
             console.log("added details",dataset);
@@ -157,14 +145,14 @@ function MyApp({ Component, pageProps }) {
     }, [token, router, ]);
 
   return (
-      <Layout user={user} setuser={setuser} userdatasets={userdatasets} Auth={Auth} token={token} setToken={setToken} 
-            setUserdatasets={setUserdatasets} dataSources={dataSources} setDataSources={setDataSources}>
+      <Layout user={user} setuser={setuser}  Auth={Auth} token={token} setToken={setToken} 
+             dataSources={dataSources} setDataSources={setDataSources}>
         <NextNProgress />
         
         <Component role={role} setLocation={setLocation} token={token} location={location} 
-            setToken={setToken} dataset={dataset} setDataset={setDataset} userdatasets={userdatasets}
+            setToken={setToken} dataset={dataset} setDataset={setDataset} 
             user={user} setuser={setuser}
-            setUserdatasets={setUserdatasets}  dataSources={dataSources} setDataSources={setDataSources}
+             dataSources={dataSources} setDataSources={setDataSources}
             title={title} description={description} setTitle={setTitle} setDescription={setDescription}
             {...pageProps} name={name} setName={setName} email={email} setEmail={setEmail} company={company} setCompany={setCompany}
             />

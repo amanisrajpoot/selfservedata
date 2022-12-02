@@ -135,25 +135,6 @@ export default function BrowseCatalogue({
     useEffect(async () => {
         if(token !== 0 && token && token !== null && token !== undefined && 
             user !== {} && user !== null && user !== undefined){
-                console.log('get users called from catalog page', token);
-            const userP = await getUser(token);
-            if(userP === null){
-                setuser({});
-            }else{
-                setuser(userP)
-                setData({
-                    "requestParameter": {
-                      "value": parseInt(user.ID)
-                    }
-                  })
-            }
-            console.log('userP', userP);
-        }
-    }, []);
-
-    useEffect(async () => {
-        if(token !== 0 && token && token !== null && token !== undefined && 
-            user !== {} && user !== null && user !== undefined){
                 setData({
                     "requestParameter": {
                       "value": parseInt(user.ID)
@@ -174,31 +155,6 @@ export default function BrowseCatalogue({
             console.log('new api datasources', dataSources);
         }
     }, [token, router, data]);
-
-    useEffect(async ()=> {
-        if(token !== 0 && token !== null && token !== undefined &&
-            (user === {} || user === null || user.error)){
-            console.log("settings page reached for account creation")
-
-          console.log('token in the dashboard page', token)
-          console.log('creating user in the backend')
-          const erro = await createUser({
-              email: email?email:Auth.user.attributes.email,
-              //phone: '+1' + phone,
-              name:name?name:Auth.user.attributes.name,
-              company:company?company:Auth.user.attributes['custom:company'],
-              token
-            
-          });
-  
-          console.log('user created response', user)
-          console.log('error while creating user using api call', erro)
-           await sleep(2000);
-        //    if("ID" in erro){
-        //        router.reload()
-        //      }
-        }
-    },[]);
 
   const [openDetails, setOpenDetails] = useState(false);
   const [dsDetails, setDSDetails] = useState([]);

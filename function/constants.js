@@ -29,7 +29,7 @@ export const BASE_BACKEND = "https://pwtjxgdzfj.execute-api.us-east-1.amazonaws.
 	//"https://3i489l9f1c.execute-api.us-east-1.amazonaws.com/dev";
 	// 'https://bye6meiro4.execute-api.us-east-2.amazonaws.com/Dev';
 
-export const BASE_API_BACKEND = "https://heruko-nocors.herokuapp.com/https://5hns54u9o3.execute-api.us-east-1.amazonaws.com/Prod/api/HomeAPI";
+export const BASE_API_BACKEND = "https://justcors.com/l_x3p6py9wgk/https://5hns54u9o3.execute-api.us-east-1.amazonaws.com/Prod/api/HomeAPI";
 	//"https://3i489l9f1c.execute-api.us-east-1.amazonaws.com/dev";
 	// 'https://bye6meiro4.execute-api.us-east-2.amazonaws.com/Dev';
 
