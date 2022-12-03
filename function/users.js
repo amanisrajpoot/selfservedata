@@ -6,6 +6,7 @@ export async function getUser(token){
         method:"GET",
         headers: {
             'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin':'*',
             'authorization': token
         },
     };
@@ -27,6 +28,7 @@ export async function createUser({email,name,company,token}){
         method:"POST",
         headers: {
             'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin':'*',
             'authorization': token
         },
         body: JSON.stringify({firstname:name.split(" ")[0], lastname:name.split(" ")[1], email, company})
@@ -41,6 +43,7 @@ export async function getPublicDatasets(token,keywords){
             method:"GET",
             headers: {
                 'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin':'*',
                 'authorization': token
             },
         };
@@ -64,6 +67,7 @@ export async function getPublicDatasetsTopicKeyword({token,keywords,topics}){
             method:"GET",
             headers: {
                 'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin':'*',
                 'authorization': token
             },
         };
@@ -87,6 +91,7 @@ export async function getPublicDatasetsTopics(token,topics){
         method:"GET",
         headers: {
             'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin':'*',
             'authorization': token
         },
     };
@@ -106,6 +111,7 @@ export async function getDatasets(token){
         method:"GET",
         headers: {
             'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin':'*',
             'authorization': token
         },
     };
@@ -125,6 +131,7 @@ export async function getDatasetsId(token,dataset_id){
         method:"GET",
         headers: {
             'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin':'*',
             'authorization': token
         },
     };
@@ -144,6 +151,7 @@ export async function downloadDatasetsId(token,dataset_id,email){
         method:"GET",
         headers: {
             'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin':'*',
             'authorization': token
         },
     };
@@ -162,6 +170,7 @@ export async function createUserDataset({token, dataset}){
         method:"POST",
         headers: {
             'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin':'*',
             'authorization': token
         },
         body: JSON.stringify(dataset)
@@ -175,6 +184,7 @@ export async function updateUserDataset({token, data}){
         method:"PUT",
         headers: {
             'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin':'*',
             'authorization': token
         },
         body: JSON.stringify(data)
@@ -188,6 +198,7 @@ export async function deleteUserDataset({token, data}){
         method:"POST",
         headers: {
             'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin':'*',
             'authorization': token
         },
         body: JSON.stringify(data)
@@ -201,6 +212,7 @@ export async function updateUserDetails({token, user}){
         method:"PUT",
         headers: {
             'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin':'*',
             'authorization': token
         },
         body: JSON.stringify(user)
@@ -214,6 +226,7 @@ export async function getReports({token, location}){
         method:"GET",
         headers: {
             'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin':'*',
             'authorization': token
         },
     };
@@ -231,6 +244,7 @@ export async function getDataSourceList(token, data){
         method:"POST",
         headers: {
              'Content-Type': 'application/json',
+             'Access-Control-Allow-Origin':'*',
              //'authorization': token
          },
         body: JSON.stringify(data)
@@ -244,6 +258,7 @@ export async function getDataSourceInfoByID(token, dataSource){
         method:"POST",
         headers: {
              'Content-Type': 'application/json',
+             'Access-Control-Allow-Origin':'*',
              //'authorization': token
          },
         body: JSON.stringify(dataSource)
@@ -257,6 +272,7 @@ export async function saveDataSourceInfo(dataSource){
         method:"POST",
         headers: {
              'Content-Type': 'application/json',
+             'Access-Control-Allow-Origin':'*',
              //'authorization': token
          },
         body: JSON.stringify(dataSource)
@@ -270,6 +286,7 @@ export async function updateSourceStatus(dataSource){
         method:"POST",
         headers: {
              'Content-Type': 'application/json',
+             'Access-Control-Allow-Origin':'*',
              //'authorization': token
          },
         body: JSON.stringify(dataSource)
