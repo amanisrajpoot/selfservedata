@@ -181,11 +181,11 @@ export default function BrowseCatalogue({
 
   useEffect(()=>{
     if(searchMode === 0){
-        setUsers(dataSources && dataSources.slice(0, 50).filter((draft)=>draft.status === 'Active'));
+        setUsers(dataSources && dataSources.filter((draft)=>draft.status === 'Active'));
     }else if(searchMode === 1){
-        setUsers(keywordFilteredDataSources && keywordFilteredDataSources.slice(0, 50).filter((draft)=>draft.status === 'Active'));
+        setUsers(keywordFilteredDataSources && keywordFilteredDataSources.filter((draft)=>draft.status === 'Active'));
     }else if(searchMode === 2){
-        setUsers(topicFilteredDataSources && topicFilteredDataSources.slice(0, 50).filter((draft)=>draft.status === 'Active'));
+        setUsers(topicFilteredDataSources && topicFilteredDataSources.filter((draft)=>draft.status === 'Active'));
     }
     },[searchMode, dataSources, keywordFilteredDataSources, topicFilteredDataSources])
 
@@ -228,11 +228,11 @@ export default function BrowseCatalogue({
 
   useEffect(()=>{
     if(searchMode === 0){
-        setUsersDraft(dataSources && dataSources.slice(0, 50).filter((draft)=>draft.status === 'Archive'));
+        setUsersDraft(dataSources && dataSources.filter((draft)=>draft.status === 'Archive'));
         }else if(searchMode === 1){
-            setUsersDraft(keywordFilteredDataSources && keywordFilteredDataSources.slice(0, 50).filter((draft)=>draft.status === 'Archive'));
+            setUsersDraft(keywordFilteredDataSources && keywordFilteredDataSources.filter((draft)=>draft.status === 'Archive'));
         }else if(searchMode === 2){
-            setUsersDraft(topicFilteredDataSources && topicFilteredDataSources.slice(0, 50).filter((draft)=>draft.status === 'Archive'));
+            setUsersDraft(topicFilteredDataSources && topicFilteredDataSources.filter((draft)=>draft.status === 'Archive'));
         }
     },[searchMode, dataSources, keywordFilteredDataSources, topicFilteredDataSources])
     
