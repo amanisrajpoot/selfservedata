@@ -253,6 +253,20 @@ export async function getDataSourceList(token, data){
     return res.json()
 }
 
+export async function getDataSourceListByEmail(token, data){
+    const req = {
+        method:"POST",
+        headers: {
+             'Content-Type': 'application/json',
+             'Access-Control-Allow-Origin':'*',
+             //'authorization': token
+         },
+        body: JSON.stringify(data)
+    };
+    const res = await fetch(BASE_API_BACKEND+"/GetDataSourceListByEmail", req)
+    return res.json()
+}
+
 export async function getDataSourceInfoByID(token, dataSource){
     const req = {
         method:"POST",

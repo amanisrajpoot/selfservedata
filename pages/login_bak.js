@@ -28,7 +28,7 @@ import IconButton from '@mui/material/IconButton';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
-mixpanel.init('d4ba2a4d19d51d9d4f19903db6a1a396', {debug: true,ignore_dnt: true});
+mixpanel.init('d4ba2a4d19d51d9d4f19903db6a1a396', {debug: true,ignore_dnt: true});  
 
 function Copyright(props) {
   return (
@@ -124,7 +124,7 @@ const Login =({token, setToken}) => {
                 'signed in': true,
                 'email':user.email
             });
-            await router.push("/dashboard");
+            await router.push("/browsecatalogue");
         }
     }
 
@@ -149,7 +149,7 @@ const Login =({token, setToken}) => {
   return (
       <div className= "login" style={{ display:'flex',minWidth:'100%', maxWidth:'100%',
         height: '100%', font:'roboto' }}>
-        {/* <div style={{ height:'100%', minWidth:'50%', maxWidth:'50%',backgroundColor:'#0DB1A1', display:'flex',
+        {/* <div style={{ height:'100%', minWidth:'50%', maxWidth:'50%',backgroundColor:'#0DB1A1', display:'flex', 
           flexDirection:'column', justifyContent:'center', alignItems:'center',
             backgroundImage: 'url(/logon-photo03.jpg)',
             // backgroundRepeat: 'no-repeat',
@@ -157,14 +157,14 @@ const Login =({token, setToken}) => {
               t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
             backgroundSize: 'cover',
             // backgroundPosition: 'left',
-
+            
           }}>
         </div> */}
         <div  style={{display:'flex', minWidth:'50%', maxWidth:'50%',
             flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
             <div style={{display:'flex',paddingTop:'3em',
                         minWidth:'55%', maxWidth:'55%', height:'90%',
-                        flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
+                        flexDirection:'column', justifyContent:'center', alignItems:'center'}}> 
             <div style={{ width:'100%',display:'flex',justifyContent:'end', paddingTop:'3em'}}>
                 <Link sx={{alignSelf:'end'}} href="/signup" variant="body2">
                     {"Don't have an account?"} <div style={{color:"#5A00E2", display:"inline"}}>Sign Up</div>
@@ -327,7 +327,7 @@ const Login =({token, setToken}) => {
 
         </div>
       </div>
-
+    
   );
 }
 

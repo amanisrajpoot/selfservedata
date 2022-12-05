@@ -14,8 +14,8 @@ import { Grid } from '@material-ui/core';
 import Divider from '@mui/material/Divider';
 import DataSourcesDetails from '../components/datasourcesdetails';
 import { useRouter } from 'next/router';
-import {getPublicDatasets, getDatasets, getUser, getPublicDatasetsTopics, getPublicDatasetsTopicKeyword} from '../function/users';
-import {getDataSourceInfoByID, getDataSourceList } from '../function/users';
+import {getPublicDatasets, getDatasets, getUser, getPublicDatasetsTopics, getPublicDatasetsTopicKeyword, getDataSourceListByEmail} from '../function/users';
+import {getDataSourceInfoByID, getDataSourceList, } from '../function/users';
 import LeftNav from "../components/LeftNav";
 import mixpanel from 'mixpanel-browser';
 import InputAdornment from "@mui/material/InputAdornment";
@@ -131,6 +131,35 @@ export default function BrowseCatalogue({
             console.log('userP', userP);
         }
     }, [token, router]);
+
+    useEffect((async ()=> {
+        console.log("browsecatalog page user create function reached")
+        console.log("query",router.query)
+        console.log("cameFrom",router.query.cameFrom)
+        console.log("origin",router.query.origin)
+        sleep(2000);
+        if(token && (user === {} || user === null || user.error)){
+          console.log("cleared the conditions to create user")
+
+          console.log('token in the dashboard page', token)
+          console.log('creating user in the backend')
+          const erro = await createUser({
+              email: email?email:Auth.user.attributes.email,
+              //phone: '+1' + phone,
+              name:name?name:Auth.user.attributes.name,
+              company:company?company:Auth.user.attributes['custom:company'],
+              token
+            
+          });
+  
+          console.log('user created response', user)
+          console.log('error while creating user using api call', erro)
+          await sleep(2000);
+        //   if("ID" in erro){
+        //        router.reload()
+        //      }
+        }
+    }),[])
 
     useEffect(async () => {
         if(token !== 0 && token && token !== null && token !== undefined && 
